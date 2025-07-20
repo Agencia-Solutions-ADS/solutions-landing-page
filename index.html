@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tu Guía para Convertir Leads en Ventas - Solutions ADS</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header class="hero-section">
+        <div class="container">
+            <img src="img/logo.png" alt="Logotipo de Solutions ADS" class="logo">
+            <h1>¿Cansado de Leads que No se Convierten?</h1>
+            <h2>¡Transformá Tus Prospectos en Clientes Reales Hoy Mismo!</h2>
+            <p class="subtitle">Descargá GRATIS nuestra Guía Exclusiva de Técnicas y Cierres de Venta. El secreto para que tus campañas de publicidad y tu negocio finalmente despeguen.</p>
+            <div class="pdf-thumbnail">
+                <img src="img/portada_pdf.png" alt="Portada del PDF Guía de Ventas">
+            </div>
+            <div class="form-container">
+                <h3>Completa para Descargar tu Guía Gratuita:</h3>
+                <form id="downloadForm">
+                    <div class="form-group">
+                        <label for="name">Nombre:</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Correo Electrónico:</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Teléfono (con código de país):</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="+5491112345678">
+                    </div>
+                    <button type="button" id="sendCodeBtn">Enviar Código de Validación</button>
+                    <div class="form-group verification-code-group" style="display: none;">
+                        <label for="verificationCode">Código de Validación:</label>
+                        <input type="text" id="verificationCode" name="verificationCode" maxlength="6">
+                        <button type="button" id="verifyCodeBtn">Validar Código</button>
+                    </div>
+                    <button type="submit" id="downloadBtn" disabled>¡Quiero Mi Guía GRATIS y Empezar a Vender Más!</button>
+                    <p class="form-message" id="formMessage"></p>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <section class="problem-solution-section">
+        <div class="container">
+            <h2>Tu Negocio Invierte en Publicidad, ¿Pero Estás Realmente CERRANDO Esas Ventas?</h2>
+            <p>Lo sabemos. Atraer clientes es un desafío, pero convertirlos en ventas es el verdadero arte. Muchos emprendedores y profesionales ven cómo sus campañas de marketing digital (¡y nuestro trabajo en Publicidad y Diseño Gráfico!) generan interés... pero el dinero no entra. ¿Por qué? Porque la clave no es solo atraer, es saber CERRAR.</p>
+            <h3>La Solución Está en Tus Manos (¡y es Gratis!):</h3>
+            <p>Hemos creado esta guía porque tu éxito es nuestro éxito. Queremos que cada peso invertido en tu publicidad digital se multiplique. Nuestro PDF "Técnicas y Cierres de Venta Imparables" te dará las herramientas precisas para convertir cada oportunidad en una venta concretada.</p>
+        </div>
+    </section>
+
+    <section class="benefits-section">
+        <div class="container">
+            <h2>Descubrí los Secretos para Vender Más y Multiplicar Tus Ganancias:</h2>
+            <ul>
+                <li><strong>Identificar y superar objeciones:</strong> Transformá los "no" y "peros" en "sí" definitivos.</li>
+                <li><strong>Aplicar cierres de venta probados:</strong> Desde el primer contacto hasta la firma, sabrás qué decir y cuándo.</li>
+                <li><strong>Maximizar el ROI de cada campaña:</strong> Hacé que cada lead generado valga oro.</li>
+                <li><strong>Desarrollar una mentalidad de vendedor exitoso:</strong> Conviértete en un cierre de ventas natural.</li>
+                <li><strong>Convertir tus esfuerzos de marketing en ingresos reales:</strong> Dejá de perder oportunidades y empezá a ganar.</li>
+            </ul>
+            <p class="note">No importa si sos un recién graduado, un emprendedor o buscas cerrar grandes negocios (high ticket): estas técnicas funcionan.</p>
+        </div>
+    </section>
+
+    <section class="testimonials-section">
+        <div class="container">
+            <h2>Lo Que Nuestros Clientes Dicen</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial-item">
+                    <p class="quote">"Desde que implementamos las técnicas de esta guía, nuestras conversiones se dispararon. ¡Es oro puro para cualquier vendedor!"</p>
+                    <p class="author">- Sofía R. (Emprendedora)</p>
+                </div>
+                <div class="testimonial-item">
+                    <p class="quote">"Siempre he invertido en publicidad, pero me faltaba el cierre. Este PDF cambió mi forma de vender. ¡Recomendadísimo!"</p>
+                    <p class="author">- Martín G. (Dueño de Negocio)</p>
+                </div>
+                <div class="testimonial-item">
+                    <p class="quote">"Como recién graduado, me sentía perdido. Esta guía me dio la confianza y las herramientas para empezar a cerrar mis primeras ventas."</p>
+                    <p class="author">- Lucas P. (Vendedor Junior)</p>
+                </div>
+                </div>
+        </div>
+    </section>
+
+    <section class="authority-section">
+        <div class="container">
+            <h2>Detrás de tu Éxito, Nuestra Experiencia:</h2>
+            <p>En Solutions ADS, no solo somos expertos en Publicidad Digital y Diseño Gráfico. Estamos comprometidos con tu crecimiento integral. Entendemos que una campaña exitosa culmina en una venta. Por eso, hemos condensado años de experiencia y los principios que aplicamos con nuestros clientes para que vos también los domines. Queremos que seas imparable.</p>
+        </div>
+    </section>
+
+    <section class="final-cta-section">
+        <div class="container">
+            <h2>¡Es Hora de Convertir Más y Preocuparte Menos!</h2>
+            <p>No dejes que los leads se escapen. Tomá el control de tus ventas y asegurá el éxito de cada campaña.</p>
+            <p class="cta-phrase">Descargá tu Guía "Técnicas y Cierres de Venta Imparables" ahora mismo y empezá a ver resultados que realmente importan.</p>
+            <div class="form-container">
+                <h3>Completa para Descargar tu Guía Gratuita:</h3>
+                <form id="downloadFormBottom">
+                    <div class="form-group">
+                        <label for="nameBottom">Nombre:</label>
+                        <input type="text" id="nameBottom" name="nameBottom" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="emailBottom">Correo Electrónico:</label>
+                        <input type="email" id="emailBottom" name="emailBottom" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phoneBottom">Teléfono (con código de país):</label>
+                        <input type="tel" id="phoneBottom" name="phoneBottom" required placeholder="+5491112345678">
+                    </div>
+                    <button type="button" id="sendCodeBtnBottom">Enviar Código de Validación</button>
+                    <div class="form-group verification-code-group-bottom" style="display: none;">
+                        <label for="verificationCodeBottom">Código de Validación:</label>
+                        <input type="text" id="verificationCodeBottom" name="verificationCodeBottom" maxlength="6">
+                        <button type="button" id="verifyCodeBtnBottom">Validar Código</button>
+                    </div>
+                    <button type="submit" id="downloadBtnBottom" disabled>¡Sí, Quiero Mi Guía Gratuita y Multiplicar Mis Ventas!</button>
+                    <p class="form-message" id="formMessageBottom"></p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Solutions ADS. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QMM8H13E1K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-QMM8H13E1K');
+    </script>
+    </body>
+</html>
