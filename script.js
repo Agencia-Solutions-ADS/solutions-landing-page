@@ -180,8 +180,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Función genérica para manejar la descarga del PDF y resetear el formulario
     function handleDownloadAndReset(messageElement, downloadBtnElement, sendBtnElement, verificationGroupElement, formElement, verificationCodeInput, formInputs) {
-        // Redirige al PDF
-        window.location.href = './Guia-Técnicas-Cierres-Venta.pdf'; // <<-- ¡AJUSTA ESTA RUTA A TU PDF!
+        // Redirige al PDF con la ruta y el nombre de archivo correctos
+        window.location.href = '/static/tu-guia-de-ventas.pdf'; // <<-- ¡ESTA ES LA LÍNEA CLAVE CORREGIDA!
         showStatus(messageElement, '¡Descarga iniciada! Revisa tus descargas.', false);
 
         // Resetear el formulario y UI
@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Configurar Event Listeners para el FORMULARIO SUPERIOR
     if (registrationFormTop) {
-        const formInputsTop = [nameInputTop, emailInputTop, phoneInputTop]; // Lista de inputs para este form
+        const formInputsTop = [nameInputTop, emailInputTop, phoneInputTop, verificationCodeInputTop]; // Añadir input de código aquí
 
         sendCodeBtnTop.addEventListener('click', () => {
             handleSendCode('top', nameInputTop, emailInputTop, phoneInputTop, statusMessageTop, verificationCodeGroupTop, sendCodeBtnTop, downloadBtnTop);
@@ -220,14 +220,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         downloadBtnTop.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevenir cualquier acción por defecto
+            e.preventDefault(); // Prevenir cualquier acción por defecto (importante para botones type="button" que no estén en un form)
             handleDownloadAndReset(statusMessageTop, downloadBtnTop, sendCodeBtnTop, verificationCodeGroupTop, registrationFormTop, verificationCodeInputTop, formInputsTop);
         });
     }
 
     // Configurar Event Listeners para el FORMULARIO INFERIOR
     if (registrationFormBottom) {
-        const formInputsBottom = [nameInputBottom, emailInputBottom, phoneInputBottom]; // Lista de inputs para este form
+        const formInputsBottom = [nameInputBottom, emailInputBottom, phoneInputBottom, verificationCodeInputBottom]; // Añadir input de código aquí
 
         sendCodeBtnBottom.addEventListener('click', () => {
             handleSendCode('bottom', nameInputBottom, emailInputBottom, phoneInputBottom, statusMessageBottom, verificationCodeGroupBottom, sendCodeBtnBottom, downloadBtnBottom);
