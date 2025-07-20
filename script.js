@@ -2,20 +2,30 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     // Referencias a los elementos para el FORMULARIO SUPERIOR
-    const registrationFormTop = document.getElementById('downloadForm'); // <<-- CORREGIDO ID
+    const registrationFormTop = document.getElementById('downloadForm');
     const sendCodeBtnTop = document.getElementById('sendCodeBtn');
+    const verificationCodeInputTop = document.getElementById('verificationCode'); // Obtener directamente el input del código
     const verificationCodeGroupTop = registrationFormTop.querySelector('.verification-code-group');
     const verifyCodeBtnTop = document.getElementById('verifyCodeBtn');
-    const statusMessageTop = registrationFormTop.querySelector('.form-message'); // Nuevo: Mensaje específico para cada form
+    const statusMessageTop = registrationFormTop.querySelector('.form-message');
     const downloadBtnTop = document.getElementById('downloadBtn');
+    const nameInputTop = document.getElementById('name');
+    const emailInputTop = document.getElementById('email');
+    const phoneInputTop = document.getElementById('phone');
+
 
     // Referencias a los elementos para el FORMULARIO INFERIOR
     const registrationFormBottom = document.getElementById('downloadFormBottom');
     const sendCodeBtnBottom = document.getElementById('sendCodeBtnBottom');
-    const verificationCodeGroupBottom = registrationFormBottom.querySelector('.verification-code-group-bottom'); // Usar clase específica
+    const verificationCodeInputBottom = document.getElementById('verificationCodeBottom'); // Obtener directamente el input del código
+    const verificationCodeGroupBottom = registrationFormBottom.querySelector('.verification-code-group-bottom');
     const verifyCodeBtnBottom = document.getElementById('verifyCodeBtnBottom');
-    const statusMessageBottom = registrationFormBottom.querySelector('.form-message'); // Nuevo: Mensaje específico para cada form
+    const statusMessageBottom = registrationFormBottom.querySelector('.form-message');
     const downloadBtnBottom = document.getElementById('downloadBtnBottom');
+    const nameInputBottom = document.getElementById('nameBottom');
+    const emailInputBottom = document.getElementById('emailBottom');
+    const phoneInputBottom = document.getElementById('phoneBottom');
+
 
     // Estado global para cada formulario
     let currentPhoneNumber = { top: '', bottom: '' };
@@ -44,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Función genérica para manejar el envío del código
-    async function handleSendCode(formType, nameInput, emailInput, phoneInput, messageElement, verificationGroupElement, sendBtnElement, verifyBtnElement) {
+    async function handleSendCode(formType, nameInput, emailInput, phoneInput, messageElement, verificationGroupElement, sendBtnElement, downloadBtnElement) {
         const name = nameInput.value.trim();
         const email = emailInput.value.trim();
         let phoneNumber = phoneInput.value.trim();
@@ -74,8 +84,9 @@ document.addEventListener('DOMContentLoaded', () => {
         showStatus(messageElement, 'Enviando código de verificación...');
         messageElement.style.color = 'orange';
 
-        // Deshabilitar botón para evitar múltiples envíos
-        sendBtnElement.disabled = true;
+        sendBtnElement.disabled = true; // Deshabilitar botón para evitar múltiples envíos
+        downloadBtnElement.disabled = true; // Asegurar que el botón de descarga está deshabilitado
+        downloadBtnElement.style.cursor = 'not-allowed';
 
         try {
             const response = await fetch('/.netlify/functions/send-code', {
@@ -96,18 +107,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 sendBtnElement.style.display = 'none'; // Ocultar botón de enviar código
             } else {
                 showStatus(messageElement, data.message || 'Error al enviar el código.', true);
+                sendBtnElement.style.display = 'block'; // Mostrar de nuevo si hubo error
             }
         } catch (error) {
             console.error('Error al solicitar código:', error);
             showStatus(messageElement, 'Ocurrió un error de red. Intenta de nuevo más tarde.', true);
+            sendBtnElement.style.display = 'block'; // Mostrar de nuevo si hubo error
         } finally {
             hideStatus(messageElement);
-            sendBtnElement.disabled = false; // Re-habilitar si es necesario, o mantener deshabilitado
+            sendBtnElement.disabled = false; // Re-habilitar después del intento
         }
     }
 
     // Función genérica para manejar la verificación del código
-    async function handleVerifyCode(formType, codeInput, messageElement, downloadBtnElement, verificationGroupElement) {
+    async function handleVerifyCode(formType, codeInput, messageElement, downloadBtnElement, verificationGroupElement, sendBtnElement, formInputs) {
         const userInputCode = codeInput.value.trim();
 
         if (!userInputCode) {
@@ -119,9 +132,9 @@ document.addEventListener('DOMContentLoaded', () => {
         showStatus(messageElement, 'Verificando código...');
         messageElement.style.color = 'orange';
 
-        // Deshabilitar botón para evitar múltiples envíos
-        verifyCodeBtnTop.disabled = true; // Asume que este botón es el que se presiona
-        verifyCodeBtnBottom.disabled = true; // Deshabilita ambos por seguridad
+        // Deshabilitar botones de verificación para ambos formularios mientras se procesa
+        verifyCodeBtnTop.disabled = true;
+        verifyCodeBtnBottom.disabled = true;
 
         try {
             const response = await fetch('/.netlify/functions/verify-code', {
@@ -141,95 +154,92 @@ document.addEventListener('DOMContentLoaded', () => {
                 showStatus(messageElement, data.message || 'Código validado. ¡Guía lista para descargar!');
                 downloadBtnElement.disabled = false; // Habilitar botón de descarga
                 downloadBtnElement.style.cursor = 'pointer'; // Cambiar cursor para indicar que es clickeable
-                // Opcional: Ocultar la sección de verificación después de éxito
-                verificationGroupElement.style.display = 'none';
                 
-                // Si el usuario hace clic en el botón de descarga, podríamos redirigir aquí.
-                // Por ejemplo: downloadBtnElement.onclick = () => window.location.href = '/ruta-a-tu-guia.pdf';
+                verificationGroupElement.style.display = 'none'; // Ocultar campo de código
+                sendBtnElement.style.display = 'none'; // También ocultar el botón "Enviar Código" si ya se verificó
+
+                // Deshabilitar los campos de entrada del formulario para evitar cambios
+                formInputs.forEach(input => input.disabled = true);
+                // Asegúrate de que el botón de descarga habilitado no se deshabilite
+                downloadBtnElement.disabled = false;
 
             } else {
                 showStatus(messageElement, data.message || 'Código incorrecto o expirado.', true);
+                downloadBtnElement.disabled = true; // Mantener deshabilitado si falla
             }
         } catch (error) {
             console.error('Error al verificar código:', error);
             showStatus(messageElement, 'Ocurrió un error de red al verificar. Intenta de nuevo más tarde.', true);
+            downloadBtnElement.disabled = true; // Mantener deshabilitado si hay error
         } finally {
             hideStatus(messageElement);
-            verifyCodeBtnTop.disabled = false; // Re-habilitar si es necesario
-            verifyCodeBtnBottom.disabled = false; // Re-habilitar si es necesario
+            verifyCodeBtnTop.disabled = false; // Re-habilitar
+            verifyCodeBtnBottom.disabled = false; // Re-habilitar
+        }
+    }
+
+    // Función genérica para manejar la descarga del PDF y resetear el formulario
+    function handleDownloadAndReset(messageElement, downloadBtnElement, sendBtnElement, verificationGroupElement, formElement, verificationCodeInput, formInputs) {
+        // Redirige al PDF
+        window.location.href = './Guia-Técnicas-Cierres-Venta.pdf'; // <<-- ¡AJUSTA ESTA RUTA A TU PDF!
+        showStatus(messageElement, '¡Descarga iniciada! Revisa tus descargas.', false);
+
+        // Resetear el formulario y UI
+        formElement.reset();
+        sendBtnElement.style.display = 'block'; // Mostrar botón de enviar código
+        verificationGroupElement.style.display = 'none'; // Ocultar campo de código
+        downloadBtnElement.disabled = true; // Deshabilitar botón de descarga
+        downloadBtnElement.style.cursor = 'not-allowed';
+        verificationCodeInput.value = ''; // Limpiar el campo del código
+
+        // Re-habilitar todos los campos de entrada del formulario
+        formInputs.forEach(input => input.disabled = false);
+
+        // Limpiar estado temporal
+        if (formElement.id === 'downloadForm') {
+            currentPhoneNumber.top = '';
+            currentName.top = '';
+            currentEmail.top = '';
+        } else if (formElement.id === 'downloadFormBottom') {
+            currentPhoneNumber.bottom = '';
+            currentName.bottom = '';
+            currentEmail.bottom = '';
         }
     }
 
     // Configurar Event Listeners para el FORMULARIO SUPERIOR
-    if (registrationFormTop) { // Asegurarse de que el elemento existe
+    if (registrationFormTop) {
+        const formInputsTop = [nameInputTop, emailInputTop, phoneInputTop]; // Lista de inputs para este form
+
         sendCodeBtnTop.addEventListener('click', () => {
-            const nameInput = document.getElementById('name');
-            const emailInput = document.getElementById('email');
-            const phoneInput = document.getElementById('phone');
-            handleSendCode('top', nameInput, emailInput, phoneInput, statusMessageTop, verificationCodeGroupTop, sendCodeBtnTop, verifyCodeBtnTop);
+            handleSendCode('top', nameInputTop, emailInputTop, phoneInputTop, statusMessageTop, verificationCodeGroupTop, sendCodeBtnTop, downloadBtnTop);
         });
 
         verifyCodeBtnTop.addEventListener('click', () => {
-            const codeInput = document.getElementById('verificationCode');
-            handleVerifyCode('top', codeInput, statusMessageTop, downloadBtnTop, verificationCodeGroupTop);
+            handleVerifyCode('top', verificationCodeInputTop, statusMessageTop, downloadBtnTop, verificationCodeGroupTop, sendCodeBtnTop, formInputsTop);
         });
 
-        // Manejar el submit final del formulario (solo si el botón de descarga está habilitado)
-        registrationFormTop.addEventListener('submit', (e) => {
-            if (downloadBtnTop.disabled) {
-                e.preventDefault(); // Evitar submit si no está validado
-                showStatus(statusMessageTop, 'Por favor, valida tu número primero.', true);
-                hideStatus(statusMessageTop);
-            }
-            // Si no está deshabilitado, el formulario se enviará normalmente.
-            // Aquí podrías agregar la lógica para la descarga directa del PDF.
-            else {
-                e.preventDefault(); // Prevenir el envío real del formulario si quieres manejar la descarga con JS
-                window.location.href = './Guia-Técnicas-Cierres-Venta.pdf'; // <<-- ¡AJUSTA ESTA RUTA A TU PDF!
-                showStatus(statusMessageTop, '¡Descarga iniciada! Revisa tus descargas.', false);
-                // Opcional: Resetear formulario después de la descarga
-                registrationFormTop.reset();
-                sendCodeBtnTop.style.display = 'block'; // Mostrar botón de enviar código
-                verificationCodeGroupTop.style.display = 'none'; // Ocultar campo de código
-                downloadBtnTop.disabled = true; // Deshabilitar botón de descarga
-                downloadBtnTop.style.cursor = 'not-allowed';
-            }
+        downloadBtnTop.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevenir cualquier acción por defecto
+            handleDownloadAndReset(statusMessageTop, downloadBtnTop, sendCodeBtnTop, verificationCodeGroupTop, registrationFormTop, verificationCodeInputTop, formInputsTop);
         });
     }
 
     // Configurar Event Listeners para el FORMULARIO INFERIOR
-    if (registrationFormBottom) { // Asegurarse de que el elemento existe
+    if (registrationFormBottom) {
+        const formInputsBottom = [nameInputBottom, emailInputBottom, phoneInputBottom]; // Lista de inputs para este form
+
         sendCodeBtnBottom.addEventListener('click', () => {
-            const nameInput = document.getElementById('nameBottom');
-            const emailInput = document.getElementById('emailBottom');
-            const phoneInput = document.getElementById('phoneBottom');
-            handleSendCode('bottom', nameInput, emailInput, phoneInput, statusMessageBottom, verificationCodeGroupBottom, sendCodeBtnBottom, verifyCodeBtnBottom);
+            handleSendCode('bottom', nameInputBottom, emailInputBottom, phoneInputBottom, statusMessageBottom, verificationCodeGroupBottom, sendCodeBtnBottom, downloadBtnBottom);
         });
 
         verifyCodeBtnBottom.addEventListener('click', () => {
-            const codeInput = document.getElementById('verificationCodeBottom');
-            handleVerifyCode('bottom', codeInput, statusMessageBottom, downloadBtnBottom, verificationCodeGroupBottom);
+            handleVerifyCode('bottom', verificationCodeInputBottom, statusMessageBottom, downloadBtnBottom, verificationCodeGroupBottom, sendCodeBtnBottom, formInputsBottom);
         });
 
-        // Manejar el submit final del formulario (solo si el botón de descarga está habilitado)
-        registrationFormBottom.addEventListener('submit', (e) => {
-            if (downloadBtnBottom.disabled) {
-                e.preventDefault(); // Evitar submit si no está validado
-                showStatus(statusMessageBottom, 'Por favor, valida tu número primero.', true);
-                hideStatus(statusMessageBottom);
-            }
-            // Si no está deshabilitado, el formulario se enviará normalmente.
-            else {
-                e.preventDefault(); // Prevenir el envío real del formulario si quieres manejar la descarga con JS
-                window.location.href = './Guia-Técnicas-Cierres-Venta.pdf'; // <<-- ¡AJUSTA ESTA RUTA A TU PDF!
-                showStatus(statusMessageBottom, '¡Descarga iniciada! Revisa tus descargas.', false);
-                // Opcional: Resetear formulario después de la descarga
-                registrationFormBottom.reset();
-                sendCodeBtnBottom.style.display = 'block'; // Mostrar botón de enviar código
-                verificationCodeGroupBottom.style.display = 'none'; // Ocultar campo de código
-                downloadBtnBottom.disabled = true; // Deshabilitar botón de descarga
-                downloadBtnBottom.style.cursor = 'not-allowed';
-            }
+        downloadBtnBottom.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevenir cualquier acción por defecto
+            handleDownloadAndReset(statusMessageBottom, downloadBtnBottom, sendCodeBtnBottom, verificationCodeGroupBottom, registrationFormBottom, verificationCodeInputBottom, formInputsBottom);
         });
     }
 });
