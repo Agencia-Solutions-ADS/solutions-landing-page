@@ -118,6 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showStatus('Verificando código...');
         statusMessage.style.color = 'orange'; // Cambiar color para "cargando"
 
+
         try {
             const response = await fetch('/.netlify/functions/verify-code', {
                 method: 'POST',
