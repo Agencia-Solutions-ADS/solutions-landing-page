@@ -1,0 +1,34 @@
+# Archivos de configuración de entorno local (¡MUY IMPORTANTE!)
+.env
+.env.local
+.env.*.local
+
+# Archivos de Google Apps Script (si los descargas localmente con CLASP u otra herramienta)
+# Si solo trabajas en el editor web de Apps Script, esto no es necesario.
+# Pero si alguna vez usas CLASP, asegúrate de ignorar:
+.clasp.json # Contiene el ID del proyecto de Apps Script y credenciales de acceso
+node_modules/ # Si usas npm en tu proyecto de Apps Script
+
+# Directorios de compilación/dependencias (si usas un framework frontend o herramientas de build)
+dist/
+build/
+out/
+.parcel-cache/
+.next/ # Para Next.js
+.nuxt/ # Para Nuxt.js
+node_modules/
+
+# Archivos de registro (logs)
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archivos de sistema operativo
+.DS_Store # macOS
+Thumbs.db # Windows
+
+# Archivos de IDE (editores de código)
+.vscode/ # Visual Studio Code (puedes ignorarlo si no quieres compartir configuraciones de tu IDE)
+.idea/ # IntelliJ IDEA / WebStorm
+*.sublime-project
