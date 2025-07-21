@@ -39,6 +39,10 @@
                     <div class="form-group verification-code-group" style="display: none;">
                         <label for="verificationCode">Código de Validación:</label>
                         <input type="text" id="verificationCode" name="verificationCode" maxlength="6">
+                        <div class="code-timer-container">
+                            <span id="countdownTimerTop"></span>
+                            <button type="button" id="resendCodeBtnTop" class="button" style="display: none;" disabled>Reenviar Código</button>
+                        </div>
                         <button type="button" id="verifyCodeBtn">Validar Código</button>
                     </div>
                     <button type="button" id="downloadBtn" disabled>¡Quiero Mi Guía GRATIS y Empezar a Vender Más!</button>
@@ -122,6 +126,10 @@
                     <div class="form-group verification-code-group-bottom" style="display: none;">
                         <label for="verificationCodeBottom">Código de Validación:</label>
                         <input type="text" id="verificationCodeBottom" name="verificationCodeBottom" maxlength="6">
+                        <div class="code-timer-container">
+                            <span id="countdownTimerBottom"></span>
+                            <button type="button" id="resendCodeBtnBottom" class="button" style="display: none;" disabled>Reenviar Código</button>
+                        </div>
                         <button type="button" id="verifyCodeBtnBottom">Validar Código</button>
                     </div>
                     <button type="button" id="downloadBtnBottom" disabled>¡Sí, Quiero Mi Guía Gratuita y Multiplicar Mis Ventas!</button>
@@ -146,5 +154,5 @@
 
       gtag('config', 'G-QMM8H13E1K');
     </script>
-    </body>
+</body>
 </html>

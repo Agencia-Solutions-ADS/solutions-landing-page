@@ -13,6 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const emailInputTop = document.getElementById('email');
     const phoneInputTop = document.getElementById('phone');
 
+    // Referencias a los elementos del temporizador y reenvío para el FORMULARIO SUPERIOR (NUEVO)
+    const countdownTimerElementTop = document.getElementById('countdownTimerTop');
+    const resendCodeBtnTop = document.getElementById('resendCodeBtnTop');
+
 
     // Referencias a los elementos para el FORMULARIO INFERIOR
     const registrationFormBottom = document.getElementById('downloadFormBottom');
@@ -26,11 +30,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const emailInputBottom = document.getElementById('emailBottom');
     const phoneInputBottom = document.getElementById('phoneBottom');
 
+    // Referencias a los elementos del temporizador y reenvío para el FORMULARIO INFERIOR (NUEVO)
+    const countdownTimerElementBottom = document.getElementById('countdownTimerBottom');
+    const resendCodeBtnBottom = document.getElementById('resendCodeBtnBottom');
 
-    // Estado global para cada formulario
+
+    // Estado global para cada formulario (NUEVO: declaradas fuera de cualquier función para acceso global)
     let currentPhoneNumber = { top: '', bottom: '' };
     let currentName = { top: '', bottom: '' };
     let currentEmail = { top: '', bottom: '' };
+
+    // Variables para el contador (NUEVO)
+    let countdownIntervalTop;
+    let countdownIntervalBottom;
+    const RESEND_TIMER_SECONDS = 300; // 5 minutos * 60 segundos
 
     // Función para mostrar mensajes de estado para un formulario específico
     function showStatus(messageElement, message, isError = false) {
@@ -52,6 +65,47 @@ document.addEventListener('DOMContentLoaded', () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     }
+
+    // Función para iniciar el contador y manejar el botón de reenvío (NUEVO)
+    function startCountdown(formType, timerElement, resendBtnElement, sendBtnElement) {
+        let timeLeft = RESEND_TIMER_SECONDS;
+
+        // Limpiar cualquier intervalo previo para evitar múltiples contadores
+        if (formType === 'top' && countdownIntervalTop) {
+            clearInterval(countdownIntervalTop);
+        } else if (formType === 'bottom' && countdownIntervalBottom) {
+            clearInterval(countdownIntervalBottom);
+        }
+
+        resendBtnElement.style.display = 'none'; // Asegurarse de que el botón de reenvío esté oculto al inicio
+        resendBtnElement.disabled = true;
+
+        // Mostrar el elemento del temporizador
+        timerElement.style.display = 'inline'; // O 'block' si prefieres que ocupe toda la línea
+
+        const intervalId = setInterval(() => {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerElement.textContent = `Puedes reenviar el código en ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            if (timeLeft <= 0) {
+                clearInterval(intervalId);
+                timerElement.textContent = ''; // Limpiar el texto del temporizador
+                timerElement.style.display = 'none'; // Ocultar el temporizador
+                resendBtnElement.style.display = 'block'; // Mostrar el botón de reenvío
+                resendBtnElement.disabled = false; // Habilitar el botón de reenvío
+                sendBtnElement.style.display = 'none'; // Asegurarse de que el botón original de "Enviar Código" esté oculto
+            }
+            timeLeft--;
+        }, 1000);
+
+        if (formType === 'top') {
+            countdownIntervalTop = intervalId;
+        } else {
+            countdownIntervalBottom = intervalId;
+        }
+    }
+
 
     // Función genérica para manejar el envío del código
     async function handleSendCode(formType, nameInput, emailInput, phoneInput, messageElement, verificationGroupElement, sendBtnElement, downloadBtnElement) {
@@ -77,6 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // Almacenar los datos del usuario en las variables globales específicas del formulario
         currentPhoneNumber[formType] = phoneNumber;
         currentName[formType] = name;
         currentEmail[formType] = email;
@@ -93,9 +148,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    phoneNumber: currentPhoneNumber[formType],
-                    name: currentName[formType],
-                    email: currentEmail[formType]
+                    phoneNumber: currentPhoneNumber[formType], // Usar el valor almacenado
+                    name: currentName[formType],             // Usar el valor almacenado
+                    email: currentEmail[formType]            // Usar el valor almacenado
                 })
             });
 
@@ -105,17 +160,53 @@ document.addEventListener('DOMContentLoaded', () => {
                 showStatus(messageElement, data.message || 'Código enviado con éxito. Por favor, verifica tu teléfono.');
                 verificationGroupElement.style.display = 'block'; // Mostrar campo de código
                 sendBtnElement.style.display = 'none'; // Ocultar botón de enviar código
+
+                // INICIAR EL CONTADOR (NUEVO)
+                if (formType === 'top') {
+                    startCountdown('top', countdownTimerElementTop, resendCodeBtnTop, sendCodeBtnTop);
+                } else {
+                    startCountdown('bottom', countdownTimerElementBottom, resendCodeBtnBottom, sendCodeBtnBottom);
+                }
+
             } else {
                 showStatus(messageElement, data.message || 'Error al enviar el código.', true);
                 sendBtnElement.style.display = 'block'; // Mostrar de nuevo si hubo error
+                // También ocultar el contador si hay un error y no se envía el código
+                if (formType === 'top') {
+                    if (countdownIntervalTop) clearInterval(countdownIntervalTop);
+                    countdownTimerElementTop.textContent = '';
+                    countdownTimerElementTop.style.display = 'none';
+                    resendCodeBtnTop.style.display = 'none';
+                    resendCodeBtnTop.disabled = true;
+                } else {
+                    if (countdownIntervalBottom) clearInterval(countdownIntervalBottom);
+                    countdownTimerElementBottom.textContent = '';
+                    countdownTimerElementBottom.style.display = 'none';
+                    resendCodeBtnBottom.style.display = 'none';
+                    resendCodeBtnBottom.disabled = true;
+                }
             }
         } catch (error) {
             console.error('Error al solicitar código:', error);
             showStatus(messageElement, 'Ocurrió un error de red. Intenta de nuevo más tarde.', true);
             sendBtnElement.style.display = 'block'; // Mostrar de nuevo si hubo error
+            // También ocultar el contador si hay un error
+            if (formType === 'top') {
+                if (countdownIntervalTop) clearInterval(countdownIntervalTop);
+                countdownTimerElementTop.textContent = '';
+                countdownTimerElementTop.style.display = 'none';
+                resendCodeBtnTop.style.display = 'none';
+                resendCodeBtnTop.disabled = true;
+            } else {
+                if (countdownIntervalBottom) clearInterval(countdownIntervalBottom);
+                countdownTimerElementBottom.textContent = '';
+                countdownTimerElementBottom.style.display = 'none';
+                resendCodeBtnBottom.style.display = 'none';
+                resendCodeBtnBottom.disabled = true;
+            }
         } finally {
             hideStatus(messageElement);
-            sendBtnElement.disabled = false; // Re-habilitar después del intento
+            sendBtnElement.disabled = false; // Re-habilitar después del intento, si no se ocultó previamente
         }
     }
 
@@ -141,10 +232,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    phoneNumber: currentPhoneNumber[formType],
+                    phoneNumber: currentPhoneNumber[formType], // Usar el valor almacenado
                     userInputCode: userInputCode,
-                    name: currentName[formType],
-                    email: currentEmail[formType]
+                    name: currentName[formType],             // Usar el valor almacenado
+                    email: currentEmail[formType]            // Usar el valor almacenado
                 })
             });
 
@@ -162,6 +253,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 formInputs.forEach(input => input.disabled = true);
                 // Asegúrate de que el botón de descarga habilitado no se deshabilite
                 downloadBtnElement.disabled = false;
+
+                // DETENER Y OCULTAR EL CONTADOR (NUEVO)
+                if (formType === 'top') {
+                    if (countdownIntervalTop) clearInterval(countdownIntervalTop);
+                    countdownTimerElementTop.textContent = '';
+                    countdownTimerElementTop.style.display = 'none';
+                    resendCodeBtnTop.style.display = 'none';
+                    resendCodeBtnTop.disabled = true;
+                } else {
+                    if (countdownIntervalBottom) clearInterval(countdownIntervalBottom);
+                    countdownTimerElementBottom.textContent = '';
+                    countdownTimerElementBottom.style.display = 'none';
+                    resendCodeBtnBottom.style.display = 'none';
+                    resendCodeBtnBottom.disabled = true;
+                }
 
             } else {
                 showStatus(messageElement, data.message || 'Código incorrecto o expirado.', true);
@@ -195,15 +301,27 @@ document.addEventListener('DOMContentLoaded', () => {
         // Re-habilitar todos los campos de entrada del formulario
         formInputs.forEach(input => input.disabled = false);
 
-        // Limpiar estado temporal
+        // Limpiar estado temporal (NUEVO)
         if (formElement.id === 'downloadForm') {
             currentPhoneNumber.top = '';
             currentName.top = '';
             currentEmail.top = '';
+            // Limpiar contador y ocultar elementos (NUEVO)
+            if (countdownIntervalTop) clearInterval(countdownIntervalTop);
+            countdownTimerElementTop.textContent = '';
+            countdownTimerElementTop.style.display = 'none';
+            resendCodeBtnTop.style.display = 'none';
+            resendCodeBtnTop.disabled = true;
         } else if (formElement.id === 'downloadFormBottom') {
             currentPhoneNumber.bottom = '';
             currentName.bottom = '';
             currentEmail.bottom = '';
+            // Limpiar contador y ocultar elementos (NUEVO)
+            if (countdownIntervalBottom) clearInterval(countdownIntervalBottom);
+            countdownTimerElementBottom.textContent = '';
+            countdownTimerElementBottom.style.display = 'none';
+            resendCodeBtnBottom.style.display = 'none';
+            resendCodeBtnBottom.disabled = true;
         }
     }
 
@@ -223,6 +341,14 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault(); // Prevenir cualquier acción por defecto (importante para botones type="button" que no estén en un form)
             handleDownloadAndReset(statusMessageTop, downloadBtnTop, sendCodeBtnTop, verificationCodeGroupTop, registrationFormTop, verificationCodeInputTop, formInputsTop);
         });
+
+        // Event listener para el botón de reenvío (superior) (NUEVO)
+        if (resendCodeBtnTop) { // Asegúrate de que el elemento existe en el HTML
+            resendCodeBtnTop.addEventListener('click', () => {
+                // Llama a handleSendCode usando los datos almacenados y pasando los elementos correctos
+                handleSendCode('top', nameInputTop, emailInputTop, phoneInputTop, statusMessageTop, verificationCodeGroupTop, sendCodeBtnTop, downloadBtnBtnTop);
+            });
+        }
     }
 
     // Configurar Event Listeners para el FORMULARIO INFERIOR
@@ -241,5 +367,13 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault(); // Prevenir cualquier acción por defecto
             handleDownloadAndReset(statusMessageBottom, downloadBtnBottom, sendCodeBtnBottom, verificationCodeGroupBottom, registrationFormBottom, verificationCodeInputBottom, formInputsBottom);
         });
+
+        // Event listener para el botón de reenvío (inferior) (NUEVO)
+        if (resendCodeBtnBottom) { // Asegúrate de que el elemento existe en el HTML
+            resendCodeBtnBottom.addEventListener('click', () => {
+                // Llama a handleSendCode usando los datos almacenados y pasando los elementos correctos
+                handleSendCode('bottom', nameInputBottom, emailInputBottom, phoneInputBottom, statusMessageBottom, verificationCodeGroupBottom, sendCodeBtnBottom, downloadBtnBottom);
+            });
+        }
     }
 });
