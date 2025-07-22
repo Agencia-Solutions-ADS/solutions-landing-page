@@ -435,3 +435,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+// --- Funcionalidad para botones de Planes ---
+
+// URL base de WhatsApp con tu número
+const whatsappBaseURL = "https://wa.me/+5492233553998?text="; // <--- ¡TU NÚMERO AQUÍ!
+
+// Selecciona todos los botones de WhatsApp de los planes
+const whatsappPlanButtons = document.querySelectorAll('.whatsapp-plan-btn');
+
+whatsappPlanButtons.forEach(button => {
+    button.addEventListener('click', function(event) {
+        // Previene el comportamiento por defecto del botón/enlace si fuera necesario
+        event.preventDefault();
+
+        // Obtiene el nombre del plan desde el atributo data-plan
+        const planName = this.dataset.plan;
+
+        // Construye el mensaje personalizado
+        const message = `Hola, me interesa el ${planName} y quisiera más información.`;
+
+        // Codifica el mensaje para URL
+        const encodedMessage = encodeURIComponent(message);
+
+        // Construye la URL completa de WhatsApp
+        const fullWhatsappURL = whatsappBaseURL + encodedMessage;
+
+        // Abre el enlace en una nueva pestaña
+        window.open(fullWhatsappURL, '_blank');
+    });
+});
+
+// Por ahora, los botones de formulario no hacen nada, se implementarán más adelante
+const formPlanButtons = document.querySelectorAll('.form-plan-btn');
+formPlanButtons.forEach(button => {
+    button.addEventListener('click', function(event) {
+        event.preventDefault();
+        const planName = this.dataset.plan;
+        console.log(`Clic en botón de formulario para ${planName}. (Funcionalidad pendiente)`);
+        // Aquí se llamaría a la función para abrir el modal del formulario
+    });
+});
