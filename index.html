@@ -45,7 +45,7 @@
                     </ul>
                     <div class="plan-actions">
                         <button class="contact-plan-btn whatsapp-plan-btn" data-plan="Plan Impulso Inicial">Contactar por WhatsApp</button>
-                        <button class="contact-plan-btn form-plan-btn" data-plan="Plan Impulso Inicial">Más Detalles por Formulario</button>
+                        <button class="contact-plan-btn form-plan-btn" data-plan="Plan Impulso Inicial">Formulario de contacto</button>
                     </div>
                 </div>
 
@@ -62,7 +62,7 @@
                     </ul>
                     <div class="plan-actions">
                         <button class="contact-plan-btn whatsapp-plan-btn" data-plan="Plan Crecimiento Estratégico">Contactar por WhatsApp</button>
-                        <button class="contact-plan-btn form-plan-btn" data-plan="Plan Crecimiento Estratégico">Más Detalles por Formulario</button>
+                        <button class="contact-plan-btn form-plan-btn" data-plan="Plan Crecimiento Estratégico">Formulario de contacto</button>
                     </div>
                 </div>
 
@@ -79,7 +79,7 @@
                     </ul>
                     <div class="plan-actions">
                         <button class="contact-plan-btn whatsapp-plan-btn" data-plan="Plan Dominio Digital">Contactar por WhatsApp</button>
-                        <button class="contact-plan-btn form-plan-btn" data-plan="Plan Dominio Digital">Más Detalles por Formulario</button>
+                        <button class="contact-plan-btn form-plan-btn" data-plan="Plan Dominio Digital">Formulario de contacto</button>
                     </div>
                 </div>
 
@@ -92,12 +92,12 @@
             <h2>Historias de Éxito de Nuestros Clientes</h2>
             <div class="testimonial-grid">
                 <div class="testimonial-item">
-                    <p class="quote">"Gracias a la estrategia de Publicidad Digital de [Tu Empresa], logramos duplicar nuestras ventas online en solo 3 meses. ¡Impresionante!"</p>
-                    <p class="author">- Juan Pérez, CEO de EmpresaX</p>
+                    <p class="quote">"Gracias a la estrategia de Publicidad Digital de Solutions ADS, logramos duplicar nuestras ventas online en solo 3 meses. ¡Impresionante!"</p>
+                    <p class="author"> Juan Pérez, CEO de EmpresaX</p>
                 </div>
                 <div class="testimonial-item">
                     <p class="quote">"No solo aumentaron nuestros leads, sino que la calidad de los mismos mejoró drásticamente. Un servicio excepcional y resultados tangibles."</p>
-                    <p class="author">- María García, Directora de Marketing de MarcaY</p>
+                    <p class="author"> María García, Directora de Marketing de MarcaY</p>
                 </div>
                 </div>
         </div>
@@ -121,5 +121,54 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js"></script>
 
     <script src="script.js"></script>
+
+    <div id="contactModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h3>Solicitar Más Detalles</h3>
+        <p>Completa este formulario y nos pondremos en contacto contigo para ofrecerte una solución a medida.</p>
+        <form id="detailsForm">
+            <div class="form-group">
+                <label for="contactName">Nombre Completo <span class="required">*</span></label>
+                <input type="text" id="contactName" name="contactName" required>
+                <div class="error-message" id="contactNameError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="contactEmail">Correo Electrónico <span class="required">*</span></label>
+                <input type="email" id="contactEmail" name="contactEmail" required>
+                <div class="error-message" id="contactEmailError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="contactTel">Teléfono (con código de país) <span class="required">*</span></label>
+                <input type="tel" id="contactTel" name="contactTel" required>
+                <div class="error-message" id="contactTelError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="companyName">Nombre de la Empresa / Emprendimiento <span class="required">*</span></label>
+                <input type="text" id="companyName" name="companyName" required>
+                <div class="error-message" id="companyNameError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="industry">Rubro / Industria (ej. E-commerce, Servicios, Educación)</label>
+                <input type="text" id="industry" name="industry">
+            </div>
+
+            <div class="form-group">
+                <label for="goals">¿Qué te gustaría lograr con publicidad digital? (Objetivos) <span class="required">*</span></label>
+                <textarea id="goals" name="goals" rows="4" required></textarea>
+                <div class="error-message" id="goalsError"></div>
+            </div>
+            
+            <input type="hidden" id="planOfInterest" name="planOfInterest">
+            <p class="form-message" id="modalFormMessage"></p>
+            <button type="submit">Enviar Solicitud</button>
+        </form>
+    </div>
+</div>
+
 </body>
 </html>

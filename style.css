@@ -490,3 +490,175 @@ footer {
         flex-direction: column; /* Apilar los botones en móvil si no lo estaban ya */
     }
 }
+
+/* --- ESTILOS PARA EL MODAL DE FORMULARIO --- */
+
+/* Contenedor del Modal (oculto por defecto) */
+.modal {
+    display: none; /* Oculto por defecto */
+    position: fixed; /* Posición fija para cubrir toda la ventana */
+    z-index: 1000; /* Asegura que esté por encima de todo */
+    left: 0;
+    top: 0;
+    width: 100%; /* Cubre todo el ancho */
+    height: 100%; /* Cubre toda la altura */
+    overflow: auto; /* Permite scroll si el contenido es muy largo */
+    background-color: rgba(0, 0, 0, 0.6); /* Fondo semi-transparente oscuro */
+    padding-top: 60px; /* Espacio para que no esté pegado al borde superior */
+}
+
+/* Contenido del Modal */
+.modal-content {
+    background-color: #ffffff; /* Fondo blanco */
+    margin: 5% auto; /* Centrado vertical y horizontalmente, con espacio superior */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    width: 90%; /* Ancho base */
+    max-width: 550px; /* Ancho máximo */
+    position: relative; /* Para posicionar el botón de cierre */
+    animation: fadeIn 0.3s ease-out; /* Animación de aparición */
+}
+
+/* Animación de entrada del modal */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Botón de cierre del Modal */
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute; /* Posicionamiento absoluto dentro del modal-content */
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #010816; /* Color azul oscuro al pasar el mouse */
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Estilos de los títulos y párrafos dentro del modal */
+.modal-content h3 {
+    color: #010816;
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 1.6em;
+}
+
+.modal-content p {
+    color: #555;
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 0.95em;
+}
+
+/* Estilos para los campos del formulario dentro del modal (reutiliza algunos de form-group) */
+.modal-content .form-group {
+    margin-bottom: 18px;
+    text-align: left; /* Asegura que las etiquetas estén a la izquierda */
+}
+
+.modal-content label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #010816;
+    font-size: 0.95em;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="email"],
+.modal-content input[type="tel"],
+.modal-content textarea {
+    width: calc(100% - 20px); /* Ajuste para padding */
+    padding: 12px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    font-family: 'Open Sans', sans-serif; /* Consistencia de fuente */
+    color: #333;
+}
+
+.modal-content textarea {
+    resize: vertical; /* Permite redimensionar verticalmente */
+    min-height: 80px;
+}
+
+/* Estilo para el asterisco de campo requerido */
+.modal-content .required {
+    color: #d24600; /* Naranja oscuro */
+    font-weight: bold;
+    margin-left: 2px;
+}
+
+/* Mensajes de error del formulario */
+.modal-content .error-message {
+    color: #d24600; /* Naranja oscuro para los errores */
+    font-size: 0.85em;
+    margin-top: 5px;
+    text-align: left;
+    display: none; /* Oculto por defecto, se muestra con JS */
+}
+
+/* Estilo para el mensaje general del formulario (éxito/error) */
+.modal-content .form-message {
+    text-align: center;
+    margin-top: 15px;
+    font-weight: bold;
+    font-size: 0.95em;
+}
+
+/* Botón de envío del formulario dentro del modal */
+.modal-content button[type="submit"] {
+    /* Reutiliza estilos base de button */
+    background-color: #d24600; /* Naranja oscuro */
+    color: white;
+    padding: 14px 25px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.05em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%; /* Ocupa todo el ancho */
+    margin-top: 20px;
+}
+
+.modal-content button[type="submit"]:hover {
+    background-color: #e89f00; /* Naranja claro al pasar el mouse */
+}
+
+/* Media Queries para responsividad del modal */
+@media (max-width: 600px) {
+    .modal-content {
+        margin: 10% auto; /* Más espacio superior en móviles */
+        width: 95%; /* Más ancho en móviles */
+        padding: 20px;
+    }
+
+    .modal-content h3 {
+        font-size: 1.4em;
+    }
+
+    .modal-content p {
+        font-size: 0.9em;
+    }
+
+    .modal-content input[type="text"],
+    .modal-content input[type="email"],
+    .modal-content input[type="tel"],
+    .modal-content textarea,
+    .modal-content button[type="submit"] {
+        font-size: 0.95em;
+        padding: 10px;
+    }
+}
