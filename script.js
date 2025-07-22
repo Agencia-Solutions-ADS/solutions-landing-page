@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Referencias a los elementos para el FORMULARIO SUPERIOR
     const registrationFormTop = document.getElementById('downloadForm');
     const sendCodeBtnTop = document.getElementById('sendCodeBtn');
-    const verificationCodeInputTop = document.getElementById('verificationCode'); // Obtener directamente el input del código
+    const verificationCodeInputTop = document.getElementById('verificationCode');
     const verificationCodeGroupTop = registrationFormTop.querySelector('.verification-code-group');
     const verifyCodeBtnTop = document.getElementById('verifyCodeBtn');
     const statusMessageTop = registrationFormTop.querySelector('.form-message');
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const emailInputTop = document.getElementById('email');
     const phoneInputTop = document.getElementById('phone');
 
-    // Referencias a los elementos del temporizador y reenvío para el FORMULARIO SUPERIOR (NUEVO)
+    // Referencias a los elementos del temporizador y reenvío para el FORMULARIO SUPERIOR
     const countdownTimerElementTop = document.getElementById('countdownTimerTop');
     const resendCodeBtnTop = document.getElementById('resendCodeBtnTop');
 
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Referencias a los elementos para el FORMULARIO INFERIOR
     const registrationFormBottom = document.getElementById('downloadFormBottom');
     const sendCodeBtnBottom = document.getElementById('sendCodeBtnBottom');
-    const verificationCodeInputBottom = document.getElementById('verificationCodeBottom'); // Obtener directamente el input del código
+    const verificationCodeInputBottom = document.getElementById('verificationCodeBottom');
     const verificationCodeGroupBottom = registrationFormBottom.querySelector('.verification-code-group-bottom');
     const verifyCodeBtnBottom = document.getElementById('verifyCodeBtnBottom');
     const statusMessageBottom = registrationFormBottom.querySelector('.form-message');
@@ -30,20 +30,44 @@ document.addEventListener('DOMContentLoaded', () => {
     const emailInputBottom = document.getElementById('emailBottom');
     const phoneInputBottom = document.getElementById('phoneBottom');
 
-    // Referencias a los elementos del temporizador y reenvío para el FORMULARIO INFERIOR (NUEVO)
+    // Referencias a los elementos del temporizador y reenvío para el FORMULARIO INFERIOR
     const countdownTimerElementBottom = document.getElementById('countdownTimerBottom');
     const resendCodeBtnBottom = document.getElementById('resendCodeBtnBottom');
 
 
-    // Estado global para cada formulario (NUEVO: declaradas fuera de cualquier función para acceso global)
+    // Estado global para cada formulario
     let currentPhoneNumber = { top: '', bottom: '' };
     let currentName = { top: '', bottom: '' };
     let currentEmail = { top: '', bottom: '' };
 
-    // Variables para el contador (NUEVO)
+    // Variables para el contador
     let countdownIntervalTop;
     let countdownIntervalBottom;
     const RESEND_TIMER_SECONDS = 300; // 5 minutos * 60 segundos
+
+
+    // **************************************************************
+    // INICIO: INTEGRACIÓN DE intl-tel-input (NUEVO)
+    // **************************************************************
+
+    // Inicializar intl-tel-input para el formulario superior
+    const itiTop = window.intlTelInput(phoneInputTop, {
+        initialCountry: "ar", // Establece el país inicial (ej. "ar" para Argentina)
+        preferredCountries: ["ar", "us", "es", "mx", "cl", "co", "pe"], // Países preferidos en la parte superior del desplegable
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js" // Necesario para la validación y formateo
+    });
+
+    // Inicializar intl-tel-input para el formulario inferior
+    const itiBottom = window.intlTelInput(phoneInputBottom, {
+        initialCountry: "ar", // Establece el país inicial
+        preferredCountries: ["ar", "us", "es", "mx", "cl", "co", "pe"], // Países preferidos
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js"
+    });
+
+    // **************************************************************
+    // FIN: INTEGRACIÓN DE intl-tel-input (NUEVO)
+    // **************************************************************
+
 
     // Función para mostrar mensajes de estado para un formulario específico
     function showStatus(messageElement, message, isError = false) {
@@ -66,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return emailRegex.test(email);
     }
 
-    // Función para iniciar el contador y manejar el botón de reenvío (NUEVO)
+    // Función para iniciar el contador y manejar el botón de reenvío
     function startCountdown(formType, timerElement, resendBtnElement, sendBtnElement) {
         let timeLeft = RESEND_TIMER_SECONDS;
 
@@ -111,9 +135,36 @@ document.addEventListener('DOMContentLoaded', () => {
     async function handleSendCode(formType, nameInput, emailInput, phoneInput, messageElement, verificationGroupElement, sendBtnElement, downloadBtnElement) {
         const name = nameInput.value.trim();
         const email = emailInput.value.trim();
-        let phoneNumber = phoneInput.value.trim();
 
-        if (!name || !email || !phoneNumber) {
+        // **************************************************************
+        // CAMBIO CLAVE: Obtener el número de teléfono formateado por intl-tel-input
+        // **************************************************************
+        let phoneNumber;
+        let itiInstance;
+
+        if (formType === 'top') {
+            itiInstance = itiTop;
+        } else {
+            itiInstance = itiBottom;
+        }
+
+        // Obtener el número en formato E.164 (ej: +541112345678)
+        phoneNumber = itiInstance.getNumber(intlTelInputUtils.numberFormat.E164);
+
+        // Validar si el número es válido según intl-tel-input
+        if (!itiInstance.isValidNumber()) {
+            // Puedes obtener el tipo de error para dar un mensaje más específico si quieres
+            // const errorCode = itiInstance.getValidationError();
+            showStatus(messageElement, 'Número de teléfono no válido o incompleto para el país seleccionado.', true);
+            hideStatus(messageElement);
+            return;
+        }
+        // **************************************************************
+        // FIN CAMBIO CLAVE
+        // **************************************************************
+
+
+        if (!name || !email || !phoneNumber) { // phoneNumber ahora ya incluye validación de intl-tel-input
             showStatus(messageElement, 'Por favor, completa todos los campos.', true);
             hideStatus(messageElement);
             return;
@@ -125,11 +176,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (!phoneNumber.startsWith('+') || phoneNumber.replace(/\D/g, '').length < 10) {
-            showStatus(messageElement, 'Formato de número de teléfono inválido. Debe incluir código de país (ej. +54911...).', true);
-            hideStatus(messageElement);
-            return;
-        }
+        // La validación manual de phoneNumber.startsWith('+') y length < 10
+        // se vuelve redundante y puede eliminarse o modificarse si confías en intl-tel-input.
+        // La comentaré, pero puedes borrarla si lo deseas.
+        // if (!phoneNumber.startsWith('+') || phoneNumber.replace(/\D/g, '').length < 10) {
+        //     showStatus(messageElement, 'Formato de número de teléfono inválido. Debe incluir código de país (ej. +54911...).', true);
+        //     hideStatus(messageElement);
+        //     return;
+        // }
+
 
         // Almacenar los datos del usuario en las variables globales específicas del formulario
         currentPhoneNumber[formType] = phoneNumber;
@@ -149,8 +204,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     phoneNumber: currentPhoneNumber[formType], // Usar el valor almacenado
-                    name: currentName[formType],             // Usar el valor almacenado
-                    email: currentEmail[formType]            // Usar el valor almacenado
+                    name: currentName[formType],              // Usar el valor almacenado
+                    email: currentEmail[formType]             // Usar el valor almacenado
                 })
             });
 
@@ -161,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 verificationGroupElement.style.display = 'block'; // Mostrar campo de código
                 sendBtnElement.style.display = 'none'; // Ocultar botón de enviar código
 
-                // INICIAR EL CONTADOR (NUEVO)
+                // INICIAR EL CONTADOR
                 if (formType === 'top') {
                     startCountdown('top', countdownTimerElementTop, resendCodeBtnTop, sendCodeBtnTop);
                 } else {
@@ -234,8 +289,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({
                     phoneNumber: currentPhoneNumber[formType], // Usar el valor almacenado
                     userInputCode: userInputCode,
-                    name: currentName[formType],             // Usar el valor almacenado
-                    email: currentEmail[formType]            // Usar el valor almacenado
+                    name: currentName[formType],              // Usar el valor almacenado
+                    email: currentEmail[formType]             // Usar el valor almacenado
                 })
             });
 
@@ -245,7 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showStatus(messageElement, data.message || 'Código validado. ¡Guía lista para descargar!');
                 downloadBtnElement.disabled = false; // Habilitar botón de descarga
                 downloadBtnElement.style.cursor = 'pointer'; // Cambiar cursor para indicar que es clickeable
-                
+
                 verificationGroupElement.style.display = 'none'; // Ocultar campo de código
                 sendBtnElement.style.display = 'none'; // También ocultar el botón "Enviar Código" si ya se verificó
 
@@ -254,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Asegúrate de que el botón de descarga habilitado no se deshabilite
                 downloadBtnElement.disabled = false;
 
-                // DETENER Y OCULTAR EL CONTADOR (NUEVO)
+                // DETENER Y OCULTAR EL CONTADOR
                 if (formType === 'top') {
                     if (countdownIntervalTop) clearInterval(countdownIntervalTop);
                     countdownTimerElementTop.textContent = '';
@@ -287,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Función genérica para manejar la descarga del PDF y resetear el formulario
     function handleDownloadAndReset(messageElement, downloadBtnElement, sendBtnElement, verificationGroupElement, formElement, verificationCodeInput, formInputs) {
         // Redirige al PDF con la ruta y el nombre de archivo correctos
-        window.location.href = '/static/tu-guia-de-ventas.pdf'; // <<-- ¡ESTA ES LA LÍNEA CLAVE CORREGIDA!
+        window.location.href = '/static/tu-guia-de-ventas.pdf';
         showStatus(messageElement, '¡Descarga iniciada! Revisa tus descargas.', false);
 
         // Resetear el formulario y UI
@@ -298,36 +353,40 @@ document.addEventListener('DOMContentLoaded', () => {
         downloadBtnElement.style.cursor = 'not-allowed';
         verificationCodeInput.value = ''; // Limpiar el campo del código
 
-        // Re-habilitar todos los campos de entrada del formulario
+        // Re-habilitar todos los campos de entrada del formulario, excepto el campo de teléfono
         formInputs.forEach(input => input.disabled = false);
 
-        // Limpiar estado temporal (NUEVO)
+        // Limpiar estado temporal
         if (formElement.id === 'downloadForm') {
             currentPhoneNumber.top = '';
             currentName.top = '';
             currentEmail.top = '';
-            // Limpiar contador y ocultar elementos (NUEVO)
+            // Limpiar contador y ocultar elementos
             if (countdownIntervalTop) clearInterval(countdownIntervalTop);
             countdownTimerElementTop.textContent = '';
             countdownTimerElementTop.style.display = 'none';
             resendCodeBtnTop.style.display = 'none';
             resendCodeBtnTop.disabled = true;
+            // IMPORTANTE: Asegúrate de que intl-tel-input se resetee si es necesario
+            itiTop.setNumber(""); // Limpia el valor en la instancia de intl-tel-input
         } else if (formElement.id === 'downloadFormBottom') {
             currentPhoneNumber.bottom = '';
             currentName.bottom = '';
             currentEmail.bottom = '';
-            // Limpiar contador y ocultar elementos (NUEVO)
+            // Limpiar contador y ocultar elementos
             if (countdownIntervalBottom) clearInterval(countdownIntervalBottom);
             countdownTimerElementBottom.textContent = '';
             countdownTimerElementBottom.style.display = 'none';
             resendCodeBtnBottom.style.display = 'none';
             resendCodeBtnBottom.disabled = true;
+            // IMPORTANTE: Asegúrate de que intl-tel-input se resetee si es necesario
+            itiBottom.setNumber(""); // Limpia el valor en la instancia de intl-tel-input
         }
     }
 
     // Configurar Event Listeners para el FORMULARIO SUPERIOR
     if (registrationFormTop) {
-        const formInputsTop = [nameInputTop, emailInputTop, phoneInputTop, verificationCodeInputTop]; // Añadir input de código aquí
+        const formInputsTop = [nameInputTop, emailInputTop, phoneInputTop, verificationCodeInputTop];
 
         sendCodeBtnTop.addEventListener('click', () => {
             handleSendCode('top', nameInputTop, emailInputTop, phoneInputTop, statusMessageTop, verificationCodeGroupTop, sendCodeBtnTop, downloadBtnTop);
@@ -338,22 +397,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         downloadBtnTop.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevenir cualquier acción por defecto (importante para botones type="button" que no estén en un form)
+            e.preventDefault();
             handleDownloadAndReset(statusMessageTop, downloadBtnTop, sendCodeBtnTop, verificationCodeGroupTop, registrationFormTop, verificationCodeInputTop, formInputsTop);
         });
 
-        // Event listener para el botón de reenvío (superior) (NUEVO)
-        if (resendCodeBtnTop) { // Asegúrate de que el elemento existe en el HTML
+        // Event listener para el botón de reenvío (superior)
+        if (resendCodeBtnTop) {
             resendCodeBtnTop.addEventListener('click', () => {
-                // Llama a handleSendCode usando los datos almacenados y pasando los elementos correctos
-                handleSendCode('top', nameInputTop, emailInputTop, phoneInputTop, statusMessageTop, verificationCodeGroupTop, sendCodeBtnTop, downloadBtnBtnTop);
+                // CORRECCIÓN: Asegúrate de pasar 'downloadBtnTop' y no 'downloadBtnBtnTop'
+                handleSendCode('top', nameInputTop, emailInputTop, phoneInputTop, statusMessageTop, verificationCodeGroupTop, sendCodeBtnTop, downloadBtnTop);
             });
         }
     }
 
     // Configurar Event Listeners para el FORMULARIO INFERIOR
     if (registrationFormBottom) {
-        const formInputsBottom = [nameInputBottom, emailInputBottom, phoneInputBottom, verificationCodeInputBottom]; // Añadir input de código aquí
+        const formInputsBottom = [nameInputBottom, emailInputBottom, phoneInputBottom, verificationCodeInputBottom];
 
         sendCodeBtnBottom.addEventListener('click', () => {
             handleSendCode('bottom', nameInputBottom, emailInputBottom, phoneInputBottom, statusMessageBottom, verificationCodeGroupBottom, sendCodeBtnBottom, downloadBtnBottom);
@@ -364,14 +423,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         downloadBtnBottom.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevenir cualquier acción por defecto
+            e.preventDefault();
             handleDownloadAndReset(statusMessageBottom, downloadBtnBottom, sendCodeBtnBottom, verificationCodeGroupBottom, registrationFormBottom, verificationCodeInputBottom, formInputsBottom);
         });
 
-        // Event listener para el botón de reenvío (inferior) (NUEVO)
-        if (resendCodeBtnBottom) { // Asegúrate de que el elemento existe en el HTML
+        // Event listener para el botón de reenvío (inferior)
+        if (resendCodeBtnBottom) {
             resendCodeBtnBottom.addEventListener('click', () => {
-                // Llama a handleSendCode usando los datos almacenados y pasando los elementos correctos
                 handleSendCode('bottom', nameInputBottom, emailInputBottom, phoneInputBottom, statusMessageBottom, verificationCodeGroupBottom, sendCodeBtnBottom, downloadBtnBottom);
             });
         }
