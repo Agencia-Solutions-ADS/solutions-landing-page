@@ -338,3 +338,155 @@ footer {
         max-width: 150px;
     }
 }
+
+/* --- NUEVOS ESTILOS PARA planes.html --- */
+
+/* Sección de Planes */
+.plans-section {
+    padding: 80px 0; /* Más espacio para esta sección principal */
+    background-color: #f8f8f8; /* Un fondo ligeramente diferente para destacarla */
+    text-align: center;
+}
+
+.plans-section .section-description {
+    max-width: 800px;
+    margin: 0 auto 50px auto; /* Espacio debajo de la descripción */
+    font-size: 1.1em;
+    color: #555;
+}
+
+/* Contenedor de la cuadrícula de planes */
+.plans-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* 3 columnas en desktop, se ajusta a pantallas más pequeñas */
+    gap: 30px; /* Espacio entre las tarjetas de los planes */
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Tarjeta individual de cada plan */
+.plan-card {
+    background-color: #ffffff; /* Fondo blanco */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada */
+    text-align: center;
+    display: flex; /* Para organizar el contenido verticalmente */
+    flex-direction: column;
+    justify-content: space-between; /* Espacio uniforme entre elementos */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Efecto hover */
+    min-height: 480px; /* Altura mínima para que sean más uniformes */
+}
+
+.plan-card:hover {
+    transform: translateY(-8px); /* Pequeño levantamiento al pasar el mouse */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.plan-card h3 {
+    color: #d24600; /* Color de tu paleta naranja oscuro para el título del plan */
+    font-size: 1.8em;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.plan-card .plan-description {
+    font-size: 1em;
+    color: #777;
+    margin-bottom: 25px;
+    flex-grow: 1; /* Permite que la descripción ocupe espacio y empuje el resto */
+}
+
+.plan-card .plan-features {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 30px;
+    text-align: left; /* Alinea las características a la izquierda */
+}
+
+.plan-card .plan-features li {
+    font-family: 'Open Sans', sans-serif;
+    color: #010816; /* Azul oscuro */
+    margin-bottom: 10px;
+    padding-left: 25px; /* Espacio para el ícono de check */
+    position: relative;
+    font-size: 0.95em;
+}
+
+.plan-card .plan-features li::before {
+    content: '✔'; /* Ícono de checkmark */
+    color: #e89f00; /* Naranja claro para el check */
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}
+
+/* Acciones del plan (botones) */
+.plan-actions {
+    margin-top: auto; /* Empuja los botones hacia la parte inferior de la tarjeta */
+    display: flex; /* Para que los botones se pongan uno al lado del otro */
+    flex-direction: column; /* Por defecto en columna, para que en móvil estén apilados */
+    gap: 15px; /* Espacio entre los botones */
+}
+
+.contact-plan-btn {
+    /* Reutiliza estilos base de button, pero ajusta */
+    padding: 12px 20px;
+    font-size: 1em;
+    border-radius: 5px;
+    text-decoration: none; /* Si es un 'a' en lugar de 'button' */
+    display: block; /* Para que ocupen todo el ancho disponible */
+    text-align: center;
+}
+
+.whatsapp-plan-btn {
+    background-color: #25D366; /* Verde WhatsApp */
+    color: white;
+}
+
+.whatsapp-plan-btn:hover {
+    background-color: #1DA851; /* Verde más oscuro al hover */
+}
+
+.form-plan-btn {
+    background-color: #e89f00; /* Naranja claro para el formulario */
+    color: white;
+}
+
+.form-plan-btn:hover {
+    background-color: #d24600; /* Naranja oscuro al hover */
+}
+
+
+/* --- Media Queries para la nueva sección --- */
+@media (max-width: 768px) {
+    .plans-section {
+        padding: 50px 0;
+    }
+
+    .plans-grid {
+        grid-template-columns: 1fr; /* Una columna en pantallas más pequeñas */
+        gap: 25px;
+    }
+
+    .plan-card {
+        min-height: auto; /* Permitir que la altura se ajuste al contenido */
+        padding: 25px;
+    }
+
+    .plan-card h3 {
+        font-size: 1.6em;
+    }
+
+    .plan-card .plan-description {
+        font-size: 0.95em;
+    }
+
+    .plan-card .plan-features li {
+        font-size: 0.9em;
+    }
+
+    .plan-actions {
+        flex-direction: column; /* Apilar los botones en móvil si no lo estaban ya */
+    }
+}
