@@ -144,6 +144,16 @@ button:disabled {
     color: #d24600; /* Mensajes en naranja oscuro */
 }
 
+/* ESTILOS AÑADIDOS PARA EL CONTADOR */
+#countdownTimerTop,
+#countdownTimerBottom {
+    color: #010816; /* Usamos tu azul oscuro principal para que contraste */
+    font-weight: bold; /* Para que sea más visible */
+    font-size: 1em; /* Aseguramos un tamaño de fuente estándar */
+    display: inline-block; /* Comportamiento de bloque en línea para posicionamiento */
+    margin-left: 10px; /* Pequeño margen a la izquierda para separarlo del input */
+}
+
 /* Secciones de Contenido */
 .problem-solution-section,
 .benefits-section,
