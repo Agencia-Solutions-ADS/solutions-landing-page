@@ -32,3 +32,7 @@ Thumbs.db # Windows
 .vscode/ # Visual Studio Code (puedes ignorarlo si no quieres compartir configuraciones de tu IDE)
 .idea/ # IntelliJ IDEA / WebStorm
 *.sublime-project
+# Local Netlify folder
+.netlify
+.env
+.hintrc
