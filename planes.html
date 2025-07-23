@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuestros Planes - Solutions ADS</title>
+    <meta name="description" content="Descubre los planes de marketing y publicidad digital de Solutions ADS. Encuentra el plan perfecto para tu negocio.">
+    <link rel="stylesheet" href="css/style.css"> 
+    <style>
+        /* --- Definición de colores de la marca para mayor consistencia --- */
+        :root {
+            --brand-blue: #0A192F; /* Azul oscuro de la marca */
+            --brand-orange: #d24600; /* Naranja/Dorado de la marca (usado en hover de nav) */
+            --brand-green: #00C853; /* Verde para precios (un verde vibrante) */
+            --text-light: #FFFFFF; /* Texto blanco para fondos oscuros */
+            --text-dark: #333; /* Texto oscuro general */
+            --background-light: #f4f4f4; /* Fondo general de la página */
+        }
+
+        /* --- Estilos específicos para la página de planes --- */
+
+        body.planes-page {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark); /* Color de texto general */
+            background-color: var(--background-light); /* Fondo claro para la página */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Encabezado */
+        header.planes-header {
+            background-color: var(--brand-blue); /* Fondo azul de la marca */
+            color: var(--text-light); /* Texto blanco */
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            flex-wrap: wrap; /* Permite que los elementos se envuelvan si no hay espacio */
+        }
+
+        header.planes-header .logo-planes img {
+            max-width: 60px;
+            height: auto;
+        }
+
+        header.planes-header nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        header.planes-header nav ul li {
+            margin-left: 20px;
+        }
+
+        header.planes-header nav ul li a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        header.planes-header nav ul li a:hover {
+            color: var(--brand-orange); /* Color naranja/dorado al pasar el mouse */
+        }
+
+        /* Título principal de la sección de planes */
+        .main-planes-title {
+            text-align: center;
+            color: var(--brand-orange); /* Color naranja para el título principal */
+            font-size: 2.8em;
+            margin: 40px auto 30px auto; /* Espacio arriba y abajo */
+            width: 90%;
+            max-width: 800px;
+            font-weight: bold;
+        }
+
+        /* Contenedor principal para los planes (las tarjetas) */
+        .planes-container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto 50px auto; /* Ajustado el margen superior */
+            display: grid; /* Usamos Grid para el layout de los planes */
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Columnas responsivas */
+            gap: 30px; /* Espacio entre las tarjetas de planes */
+            flex-grow: 1;
+        }
+
+        /* Estilo para cada tarjeta de plan */
+        .plan-card {
+            background-color: var(--brand-blue); /* Fondo azul para las tarjetas */
+            color: var(--text-light); /* Texto blanco para las tarjetas */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            
+            /* --- PROPIEDADES AÑADIDAS PARA ALINEAR EL BOTÓN ABAJO --- */
+            display: flex; 
+            flex-direction: column;
+            justify-content: space-between;
+            /* --- FIN DE MODIFICACIONES --- */
+        }
+
+        .plan-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        }
+
+        .plan-card h2 {
+            color: var(--brand-orange); /* Títulos de planes en naranja */
+            font-size: 2.2em;
+            margin-bottom: 15px;
+        }
+
+        .plan-card .price {
+            font-size: 2.8em;
+            color: var(--brand-green); /* Precios en verde */
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .plan-card .price span {
+            font-size: 0.5em; /* Tamaño para la moneda */
+            vertical-align: super;
+        }
+
+        .plan-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+            text-align: left; /* Alinea los ítems de la lista a la izquierda */
+            flex-grow: 1; /* Permite que la lista de características ocupe el espacio disponible */
+        }
+
+        .plan-card ul li {
+            margin-bottom: 10px;
+            color: var(--text-light); /* Asegura que el texto de la lista sea blanco */
+            position: relative;
+            padding-left: 20px; /* Espacio para el ícono de check */
+        }
+
+        /* Opcional: Añadir un icono de check para los ítems de la lista */
+        .plan-card ul li::before {
+            content: '✔'; /* Símbolo de check */
+            color: var(--brand-green); /* Color del check */
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-weight: bold;
+        }
+
+        .plan-card .btn-plan {
+            display: inline-block;
+            background-color: var(--brand-orange); /* Fondo naranja para el botón */
+            color: var(--text-light); /* Texto blanco para el botón */
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            margin-top: auto; /* Empuja el botón hacia la parte inferior si hay espacio */
+        }
+
+        .plan-card .btn-plan:hover {
+            background-color: #e89f00; /* Un naranja ligeramente más oscuro para el hover */
+        }
+
+        /* Pie de página */
+        footer.planes-footer {
+            background-color: var(--brand-blue); /* Fondo azul de la marca */
+            color: var(--text-light); /* Texto blanco */
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Media queries para responsividad */
+        @media (max-width: 768px) {
+            .main-planes-title {
+                font-size: 2.2em;
+                margin-top: 20px;
+            }
+            .planes-container {
+                grid-template-columns: 1fr; /* Una sola columna en móviles */
+                width: 95%;
+            }
+            header.planes-header {
+                flex-direction: column;
+                padding: 10px;
+            }
+            header.planes-header nav ul {
+                margin-top: 10px;
+            }
+            header.planes-header nav ul li {
+                margin: 0 10px;
+            }
+            .plan-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body class="planes-page">
+
+    <header class="planes-header">
+        <div class="logo-planes">
+            <a href="/">
+                <img src="img/logo-400.png" alt="Logo Solutions ADS">
+            </a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/blog.html">Blog</a></li>
+                <li><a href="/contacto.html">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <h1 class="main-planes-title">Nuestros Planes de Marketing y Publicidad Digital</h1>
+
+    <div class="planes-container">
+        <div class="plan-card">
+            <h2>Plan Básico</h2>
+            <p class="price"><span>USD</span>499</p>
+            <ul>
+                <li>Análisis inicial de tu presencia digital.</li>
+                <li>Gestión básica de Redes Sociales (1 plataforma).</li>
+                <li>1 Campaña de Anuncios Digitales (ej. Google Ads o Facebook Ads).</li>
+                <li>Reporte mensual de rendimiento.</li>
+            </ul>
+            <a href="/contacto.html" class="btn-plan">Más Detalles / Quiero este plan</a>
+        </div>
+
+        <div class="plan-card">
+            <h2>Plan Crecimiento</h2>
+            <p class="price"><span>USD</span>899</p>
+            <ul>
+                <li>Análisis profundo y estrategia personalizada.</li>
+                <li>Gestión avanzada de Redes Sociales (hasta 3 plataformas).</li>
+                <li>2 Campañas de Anuncios Digitales optimizadas.</li>
+                <li>Optimización SEO básica del sitio web.</li>
+                <li>Reporte detallado y reunión estratégica mensual.</li>
+            </ul>
+            <a href="/contacto.html" class="btn-plan">Más Detalles / Quiero este plan</a>
+        </div>
+
+        <div class="plan-card">
+            <h2>Plan Premium</h2>
+            <p class="price"><span>USD</span>1499</p>
+            <ul>
+                <li>Auditoría completa y estrategia integral.</li>
+                <li>Gestión ilimitada de Redes Sociales.</li>
+                <li>Múltiples Campañas de Anuncios Digitales de alto impacto.</li>
+                <li>SEO avanzado y marketing de contenidos (Blog).</li>
+                <li>Email marketing y automatización.</li>
+                <li>Soporte prioritario y reuniones semanales.</li>
+            </ul>
+            <a href="/contacto.html" class="btn-plan">Más Detalles / Quiero este plan</a>
+        </div>
+
+    </div>
+
+    <footer class="planes-footer">
+        <p>&copy; 2025 Solutions ADS. Todos los derechos reservados.</p>
+    </footer>
+
+</body>
+</html>
