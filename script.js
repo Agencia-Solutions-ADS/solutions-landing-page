@@ -546,15 +546,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
 
                 if (response.ok) {
+                    // *** INICIO DE LA MODIFICACIÓN ***
+                    // Opcional: mostrar un mensaje breve antes de redirigir
                     if (modalFormMessage) {
-                        modalFormMessage.textContent = '¡Solicitud enviada con éxito! Nos pondremos en contacto pronto.';
-                        modalFormMessage.style.color = '#25D366';
+                        modalFormMessage.textContent = '¡Solicitud enviada con éxito!';
+                        modalFormMessage.style.color = '#25D366'; // Color de éxito
                     }
-                    detailsForm.reset();
-                    if (contactTelIti) contactTelIti.setNumber("");
-                    setTimeout(() => {
-                        if (contactModal) contactModal.style.display = 'none';
-                    }, 3000);
+                    // Redirigir a la página de agradecimiento inmediatamente
+                    window.location.href = '/gracias.html'; 
+                    // Ya no necesitamos resetear el formulario ni cerrar el modal aquí
+                    // porque la página será reemplazada por gracias.html
+                    // *** FIN DE LA MODIFICACIÓN ***
                 } else {
                     if (modalFormMessage) {
                         modalFormMessage.textContent = data.message || 'Hubo un error al enviar tu solicitud. Intenta de nuevo.';
