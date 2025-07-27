@@ -1,10 +1,7 @@
 [build]
   publish = "." # Directorio donde se encuentran tus archivos HTML, CSS, JS (la raíz del proyecto)
   functions = "netlify/functions" # Directorio donde se encuentran tus Netlify Functions
-  # NUEVA LÍNEA: Comando para reemplazar la URL de Apps Script en tu archivo JavaScript del chatbot.
-  # Netlify inyecta el valor de la variable de entorno 'VITE_APPS_SCRIPT_API_URL' durante el build.
-  # Asegúrate de que 'chatbot_est.js' es el nombre exacto de tu archivo JS y está en el directorio 'publish'.
-  command = "sed -i 's|__APPS_SCRIPT_API_URL_PLACEHOLDER__|'$VITE_APPS_SCRIPT_API_URL'|g' chatbot_est.js"
+  # La línea 'command = "sed -i ..."' ha sido eliminada, ya no es necesaria con el proxy.
 
 [functions]
   node_bundler = "esbuild" # Se recomienda para un mejor rendimiento
@@ -18,4 +15,4 @@
   from = "/*"
   to = "/index.html" # Esto redirige todas las rutas no encontradas a index.html.
   status = 200       # Si tu archivo principal es 'chat-bot.html', deberías renombrarlo a 'index.html'
-                     # o añadir una redirección específica si quieres que /chat-bot.html sea el acceso principal.
+                     # para que sea la página de aterrizaje por defecto de tu sitio de Netlify.
