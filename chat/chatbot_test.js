@@ -1,121 +1,84 @@
-// --- chatbot_test.js ---
+// chatbot_test.js del chatbot
 
-// ¡¡¡IMPORTANTE!!! Pega aquí la URL de tu nuevo despliegue de Apps Script 'ChatbotLuca_TestAPI'
-const endpointURL = "https://script.google.com/macros/s/AKfycbwCi9Lm3S67GzF0qEF_y9Id7hskm-SK8xQotkRARJRBzw4qrW41WJCDrUJPRIaVYB-DLg/exec"; // ¡TU URL REAL AQUÍ! // <<< ¡ACTUALIZA CON TU PROPIA URL DE DESPLIEGUE!
+// La URL de tu API de Google Apps Script.
+// Este marcador de posición será reemplazado por Netlify durante el despliegue.
+const APPS_SCRIPT_API_URL = "__APPS_SCRIPT_API_URL_PLACEHOLDER__";
 
-document.addEventListener("DOMContentLoaded", () => {
-    // Selecciona los elementos HTML (usando los mismos IDs de tu chatbot original)
-    const chatbotContainer = document.getElementById("chatbot-container");
-    const chatbotToggleButton = document.getElementById("chatbot-toggle-button");
-    const chatbotCloseButton = document.getElementById("chatbot-close-button");
-    const chatbotMessages = document.getElementById("chatbot-messages");
-    const chatbotInput = document.getElementById("chatbot-input");
-    const chatbotSendButton = document.getElementById("chatbot-send-button");
+// --- Variables y elementos del DOM ---
+const chatboxMessages = document.getElementById('chatbox-messages');
+const chatboxInput = document.getElementById('chatbox-input');
+const chatboxSendButton = document.getElementById('chatbox-send-button');
 
-    // --- DEBUGGING: Revisa si los elementos se encuentran ---
-    console.log("Elemento chatbotContainer:", chatbotContainer);
-    console.log("Elemento chatbotToggleButton:", chatbotToggleButton);
-    console.log("Elemento chatbotCloseButton:", chatbotCloseButton);
-    console.log("Elemento chatbotMessages:", chatbotMessages);
-    console.log("Elemento chatbotInput:", chatbotInput);
-    console.log("Elemento chatbotSendButton:", chatbotSendButton);
-    // --- FIN DEBUGGING ---
+// --- Funciones del Chatbot ---
 
+// Función para añadir un mensaje al chat
+function addMessage(sender, message) {
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('message', sender);
+    messageElement.textContent = message;
+    chatboxMessages.appendChild(messageElement);
+    chatboxMessages.scrollTop = chatboxMessages.scrollHeight; // Auto-scroll
+}
 
-    function agregarMensaje(texto, autor = "bot") {
-        const div = document.createElement("div");
-        div.className = `message ${autor}`; // Usando las clases de tu style.css
-        div.textContent = texto;
-        chatbotMessages.appendChild(div);
-        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+// Función para enviar un mensaje de prueba a la API (tu Google Apps Script)
+async function enviarMensajeDePrueba() {
+    const message = chatboxInput.value.trim();
+    if (message === '') {
+        return; // No enviar mensajes vacíos
     }
 
-    async function enviarMensajeDePrueba() {
-        const userMessage = chatbotInput.value.trim();
-        if (!userMessage) {
-            agregarMensaje("Por favor, escribe un mensaje de prueba.", "bot");
-            return;
+    addMessage('user', message); // Muestra el mensaje del usuario en el chat
+    chatboxInput.value = ''; // Limpia el input
+
+    addMessage('bot', 'Enviando mensaje de prueba a la API...'); // Mensaje de feedback
+
+    try {
+        const payload = {
+            action: 'saveTestMessage', // Puedes definir una acción específica para tu endpoint de prueba si lo necesitas en Apps Script
+            testMessage: message,
+            timestamp: new Date().toISOString()
+        };
+
+        const response = await fetch(APPS_SCRIPT_API_URL, {
+            method: 'POST',
+            mode: 'cors', // Asegura el modo CORS para la petición
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            // Si la respuesta no es 2xx, lanza un error
+            const errorText = await response.text(); // Intenta leer el cuerpo de la respuesta para más detalles
+            throw new Error(`Error HTTP: ${response.status} - ${errorText}`);
         }
 
-        agregarMensaje(userMessage, "user"); // Muestra lo que el usuario escribió
-        chatbotInput.value = ""; // Limpia el input
+        const data = await response.json(); // Parsea la respuesta JSON de tu Apps Script
+        addMessage('bot', `Respuesta de la API: ${data.message || 'Éxito, pero sin mensaje específico.'}`);
 
-        try {
-            agregarMensaje("Enviando mensaje de prueba a la API...", "bot");
-            
-            const response = await fetch(endpointURL, {
-                method: 'POST',
-                mode: 'cors', // Crucial para la comunicación entre dominios
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ testMessage: userMessage }) // Envía un objeto simple
-            });
+        // Opcional: Si quieres mostrar los datos guardados en la hoja
+        // addMessage('bot', `Datos guardados: ${JSON.stringify(data)}`);
 
-            if (response.ok) {
-                const result = await response.json();
-                agregarMensaje(`API respondió: ${result.message || JSON.stringify(result)}`, "bot");
-                console.log("Respuesta completa de la API de prueba:", result);
-            } else {
-                const errorText = await response.text();
-                agregarMensaje(`Error de la API: ${response.status} - ${errorText}`, "bot");
-                console.error("Error en la respuesta de la API de prueba:", response.status, errorText);
-            }
-        } catch (error) {
-            agregarMensaje(`Error de conexión: ${error.message}. Revisa la consola.`, "bot");
-            console.error("Error de fetch en chatbot_test.js:", error);
-        }
+    } catch (error) {
+        console.error('Error de conexión al enviar mensaje a Apps Script:', error);
+        addMessage('bot', 'Error de conexión. Falló al comunicarse con la API. Revisa la consola para más detalles.');
     }
+}
 
-    // --- Funcionalidad de Abrir/Cerrar Chatbot (Añadida de nuevo) ---
-    if (chatbotToggleButton) { // Verifica que el elemento existe antes de añadir el listener
-        chatbotToggleButton.addEventListener("click", () => {
-            chatbotContainer.classList.toggle("hidden");
-            chatbotToggleButton.classList.toggle("hidden");
-            if (!chatbotContainer.classList.contains("hidden")) {
-                // Mensaje de bienvenida inicial (solo si está vacío)
-                if (chatbotMessages.children.length === 0) {
-                    agregarMensaje("¡Hola! Soy un bot de prueba. Escribe un mensaje para ver si los datos se guardan.", "bot");
-                }
-                chatbotInput.focus();
-                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-            }
-        });
-    } else {
-        console.error("Error: chatbotToggleButton no encontrado. Asegúrate que el ID 'chatbot-toggle-button' esté en tu HTML.");
+// --- Event Listeners ---
+
+// Evento al hacer click en el botón de enviar
+chatboxSendButton.addEventListener('click', enviarMensajeDePrueba);
+
+// Evento al presionar Enter en el input
+chatboxInput.addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+        enviarMensajeDePrueba();
     }
+});
 
-    if (chatbotCloseButton) { // Verifica que el elemento existe
-        chatbotCloseButton.addEventListener("click", () => {
-            chatbotContainer.classList.add("hidden");
-            chatbotToggleButton.classList.remove("hidden");
-        });
-    } else {
-        console.error("Error: chatbotCloseButton no encontrado. Asegúrate que el ID 'chatbot-close-button' esté en tu HTML.");
-    }
-    // --- FIN Funcionalidad de Abrir/Cerrar Chatbot ---
-
-
-    // Reemplaza los listeners del chatbot original con los de la prueba
-    if (chatbotSendButton) {
-        chatbotSendButton.addEventListener("click", enviarMensajeDePrueba);
-    } else {
-        console.error("Error: chatbotSendButton no encontrado.");
-    }
-
-    if (chatbotInput) {
-        chatbotInput.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") {
-                enviarMensajeDePrueba();
-            }
-        });
-    } else {
-        console.error("Error: chatbotInput no encontrado.");
-    }
-
-    // Mensaje de inicio de la prueba (solo si el contenedor no está oculto al principio y no hay mensajes)
-    // Este mensaje se mostrará automáticamente si el chatbot no está hidden al cargar o después de abrirlo
-    if (!chatbotContainer.classList.contains("hidden") && chatbotMessages.children.length === 0) {
-        agregarMensaje("¡Hola! Soy un bot de prueba. Escribe un mensaje para ver si los datos se guardan.", "bot");
-    }
+// Mensaje de bienvenida inicial
+document.addEventListener('DOMContentLoaded', () => {
+    addMessage('bot', '¡Hola! Soy un bot de prueba. Escribe un mensaje para ver si los datos se guardan.');
 });
