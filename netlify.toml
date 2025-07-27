@@ -1,7 +1,7 @@
 [build]
-  publish = "." # Directorio donde se encuentran tus archivos HTML, CSS, JS (la raíz del proyecto)
-  functions = "netlify/functions" # Directorio donde se encuentran tus Netlify Functions
-  # La línea 'command = "sed -i ..."' ha sido eliminada, ya no es necesaria con el proxy.
+  # Ahora, 'publish' debe apuntar a la carpeta 'chat' donde están tus archivos del sitio
+  publish = "chat"
+  functions = "netlify/functions" # Este sigue siendo el directorio para las Netlify Functions
 
 [functions]
   node_bundler = "esbuild" # Se recomienda para un mejor rendimiento
@@ -12,7 +12,8 @@
   status = 200
 
 [[redirects]]
+  # Esta regla redirige la raíz de tu dominio Netlify a chat-bot.html dentro de la carpeta 'chat'.
+  # Así, al acceder a 'solutionsads.netlify.app/' cargará directamente 'chat/chat-bot.html'
   from = "/*"
-  to = "/index.html" # Esto redirige todas las rutas no encontradas a index.html.
-  status = 200       # Si tu archivo principal es 'chat-bot.html', deberías renombrarlo a 'index.html'
-                     # para que sea la página de aterrizaje por defecto de tu sitio de Netlify.
+  to = "/chat-bot.html" # Ruta relativa a la carpeta 'publish' (es decir, dentro de 'chat/')
+  status = 200

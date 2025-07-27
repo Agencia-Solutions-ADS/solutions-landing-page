@@ -1,7 +1,11 @@
-// chatbot_test.js del chatbot
+// chatbot_test.js (dentro de la carpeta 'chat')
 
-// Ahora la URL apunta a tu Netlify Function, no directamente a Apps Script
-const API_ENDPOINT_URL = "/.netlify/functions/proxy-apps-script"; // Ajusta este nombre si tu archivo es diferente
+// La URL de tu Netlify Function. Debe ser una ruta absoluta desde la raíz del dominio.
+// Si tu sitio se publica desde la raíz (ej. solutionsads.netlify.app/),
+// y tu función está en /.netlify/functions/, entonces esta ruta es correcta.
+const API_ENDPOINT_URL = "/.netlify/functions/proxy-apps-script";
+
+// ... el resto de tu código JS se mantiene igual ...
 
 // --- Variables y elementos del DOM ---
 const chatboxMessages = document.getElementById('chatbox-messages');
@@ -36,7 +40,8 @@ async function enviarMensajeDePrueba() {
             timestamp: new Date().toISOString()
         };
 
-        const response = await fetch(API_ENDPOINT_URL, { // Llama a la Netlify Function
+        // Llama a la Netlify Function
+        const response = await fetch(API_ENDPOINT_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -45,11 +50,11 @@ async function enviarMensajeDePrueba() {
         });
 
         if (!response.ok) {
-            const errorData = await response.json(); // La Netlify Function devuelve JSON en caso de error
+            const errorData = await response.json();
             throw new Error(`Error en el proxy: ${response.status} - ${errorData.message || 'Error desconocido.'}`);
         }
 
-        const data = await response.json(); // Parsea la respuesta JSON de la Netlify Function
+        const data = await response.json();
         addMessage('bot', `Respuesta final: ${data.message || 'Éxito, pero sin mensaje específico.'}`);
 
     } catch (error) {
