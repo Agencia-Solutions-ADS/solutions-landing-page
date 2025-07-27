@@ -4,23 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tu Guía para Convertir Leads en Ventas - Solutions ADS</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../css/style.css"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/css/intlTelInput.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MLJ2W3J0D4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-MLJ2W3J0D4');
+    </script>
+    
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1084140433248821');
+    fbq('track', 'PageView');
+    // NOTA IMPORTANTE: El evento 'Lead' debería dispararse SOLO cuando el formulario se envía exitosamente y la descarga comienza.
+    // Necesitas añadir fbq('track', 'Lead'); dentro de la función de éxito de tu formulario en script.js,
+    // y podrías eliminarlo de aquí si lo haces así. Por ahora, lo dejo aquí para asegurar que se dispare al menos una vez al cargar la página.
+    // Idealmente: fbq('track', 'Lead'); cuando el usuario descarga el PDF.
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1084140433248821&ev=PageView&noscript=1"
+    /></noscript>
 </head>
 <body>
 
     <header class="hero-section">
         <div class="container">
-            <img src="img/logo.png" alt="Logotipo de Solutions ADS" class="logo">
+            <img src="../img/logo-400.png" alt="Logotipo de Solutions ADS" class="logo">
             <h1>¿Cansado de Leads que No se Convierten?</h1>
             <h2>¡Transformá Tus Prospectos en Clientes Reales Hoy Mismo!</h2>
             <p class="subtitle">Descargá GRATIS nuestra Guía Exclusiva de Técnicas y Cierres de Venta. El secreto para que tus campañas de publicidad y tu negocio finalmente despeguen.</p>
             <div class="pdf-thumbnail">
-                <img src="img/portada_pdf.png" alt="Portada del PDF Guía de Ventas">
+                <img src="../img/portada_pdf.png" alt="Portada del PDF Guía de Ventas">
             </div>
             <div class="form-container">
                 <h3>Completa para Descargar tu Guía Gratuita:</h3>
@@ -148,26 +177,7 @@
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/intlTelInput.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js"></script> <script src="script.js"></script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QMM8H13E1K"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-QMM8H13E1K');
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js"></script> 
+    <script src="../js/script.js"></script> 
 </body>
-
-
-
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-MLJ2W3J0D4"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-MLJ2W3J0D4');
-</script>
 </html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto - Solutions ADS</title>
+    <meta name="description" content="Ponte en contacto con Solutions ADS para consultas, presupuestos de marketing digital, publicidad o soporte. Rellena nuestro formulario, llámanos o envíanos un email.">
+    
+    <style>
+        /* Estilos generales y del header (adaptados del estilo general) */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif; /* Fuente base, considera usar tu fuente principal aquí */
+            color: #333;
+            background-color: #f4f4f4; /* Fondo claro para la página */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-header {
+            background-color: #010a16; /* Usando tu color #010a16 */
+            color: #FFFFFF;
+            padding: 10px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            position: sticky; /* Para que el header se mantenga arriba */
+            top: 0;
+            z-index: 1000;
+        }
+
+        .main-header .logo img {
+            max-height: 40px; /* Tamaño del logo ajustado */
+            width: auto;
+            display: block;
+        }
+
+        .main-header nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .main-header nav ul li {
+            margin-left: 25px;
+        }
+
+        .main-header nav ul li a {
+            color: #FFFFFF;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+        }
+
+        .main-header nav ul li a:hover {
+            color: #e89f00; /* Usando tu color #e89f00 para el hover */
+        }
+        
+        /* Estilos del footer (adaptados del estilo general) */
+        .main-footer {
+            background-color: #010a16; /* Usando tu color #010a16 */
+            color: #FFFFFF;
+            text-align: center;
+            padding: 20px;
+            margin-top: auto; /* Empuja el footer hacia abajo */
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Estilos específicos para la página de contacto */
+        .contact-container {
+            width: 90%;
+            max-width: 900px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            flex-grow: 1;
+            display: grid; /* Usando grid para un layout más controlado */
+            grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
+            gap: 20px; /* Reduciendo el espacio entre columnas */
+        }
+
+        .contact-info, .contact-form-section {
+            padding: 10px; /* Pequeño padding interno para las secciones */
+        }
+
+        .contact-info h1, .contact-form-section h2 {
+            color: #010a16; /* Usando tu color #010a16 para los títulos */
+            margin-bottom: 15px; /* Menos espacio debajo de los títulos */
+            font-size: 1.8em; /* Títulos ligeramente más pequeños */
+        }
+
+        .contact-info p {
+            margin-bottom: 10px; /* Menos espacio debajo de los párrafos */
+            color: #555;
+            font-size: 0.95em; /* Texto ligeramente más pequeño */
+        }
+
+        .contact-info ul {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px; /* Menos espacio debajo de la lista */
+        }
+
+        .contact-info ul li {
+            margin-bottom: 8px; /* Menos espacio entre los items de la lista */
+            font-size: 1em; /* Texto de la lista ligeramente más pequeño */
+            color: #555;
+        }
+
+        .contact-info ul li strong {
+            color: #010a16; /* Usando tu color #010a16 */
+        }
+
+        .contact-info ul li a {
+            color: #010a16; /* Usando tu color #010a16 */
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact-info ul li a:hover {
+            color: #e89f00; /* Usando tu color #e89f00 para el hover */
+        }
+
+        /* Estilos del formulario */
+        .contact-form label {
+            display: block;
+            margin-bottom: 6px; /* Menos espacio debajo de las etiquetas */
+            font-weight: bold;
+            color: #333;
+            text-align: left;
+            font-size: 0.9em; /* Etiquetas ligeramente más pequeñas */
+        }
+
+        .contact-form input[type="text"],
+        .contact-form input[type="email"],
+        .contact-form input[type="tel"],
+        .contact-form textarea {
+            width: 100%;
+            padding: 10px; /* Relleno ligeramente más pequeño */
+            margin-bottom: 15px; /* Menos espacio debajo de los campos */
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box; /* Asegura que el padding no aumente el ancho */
+            font-size: 0.9em; /* Texto del campo ligeramente más pequeño */
+        }
+
+        .contact-form textarea {
+            resize: vertical; /* Permite redimensionar verticalmente */
+            min-height: 100px; /* Altura del textarea ligeramente menor */
+        }
+
+        .contact-form button[type="submit"] {
+            background-color: #010a16; /* Usando tu color #010a16 */
+            color: #FFFFFF;
+            padding: 10px 20px; /* Relleno del botón ligeramente más pequeño */
+            border: none;
+            border-radius: 5px;
+            font-size: 1em; /* Texto del botón ligeramente más pequeño */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: auto;
+        }
+
+        .contact-form button[type="submit"]:hover {
+            background-color: #e89f00; /* Usando tu color #e89f00 para el hover */
+            color: #010a16; /* Cambiando el color del texto para que contraste */
+        }
+
+        .privacy-checkbox {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px; /* Menos espacio debajo del checkbox */
+            text-align: left;
+            font-size: 0.85em; /* Texto del checkbox ligeramente más pequeño */
+        }
+
+        .privacy-checkbox input {
+            margin-right: 8px; /* Menos espacio a la derecha del checkbox */
+            width: auto;
+        }
+
+        .privacy-checkbox label {
+            font-weight: normal;
+            color: #555;
+            margin-bottom: 0;
+        }
+        
+        .privacy-checkbox label a {
+            color: #010a16; /* Usando tu color #010a16 */
+            text-decoration: underline;
+        }
+        
+        .privacy-checkbox label a:hover {
+            color: #e89f00; /* Usando tu color #e89f00 para el hover */
+        }
+
+        /* Estilos para el mapa (ejemplo) */
+        .map-container {
+            grid-column: 1 / 3; /* El mapa ocupa ambas columnas ahora */
+            width: 100%;
+            height: 250px; /* Altura del mapa más pequeña */
+            background-color: #eee;
+            border-radius: 8px;
+            overflow: hidden; /* Asegura que el iframe no se salga */
+            margin-top: 20px; /* Menos espacio arriba del mapa */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        
+        /* Nuevos estilos para los iconos de redes sociales */
+        .social-links { /* Esta es la <ul> existente */
+            display: flex; /* Para que los elementos <li> se muestren en línea */
+            justify-content: center; /* Centra los iconos */
+            list-style: none; /* Remueve los puntos de la lista */
+            padding: 0; /* Remueve el padding por defecto de la lista */
+            margin-top: 20px; /* Añade espacio por encima de los iconos */
+            gap: 20px; /* Espacio entre los iconos */
+        }
+
+        .social-links li {
+            margin-bottom: 0; /* Elimina el margen inferior predeterminado de los elementos de lista */
+        }
+
+        .social-icon { /* Para las imágenes de los iconos */
+            width: 40px; /* Tamaño de los iconos */
+            height: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .social-icon:hover {
+            transform: translateY(-5px); /* Efecto de elevación al pasar el mouse */
+        }
+
+        /* Media Queries para responsividad */
+        @media (max-width: 768px) {
+            .main-header {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 10px 20px;
+            }
+
+            .main-header nav ul {
+                flex-direction: column;
+                width: 100%;
+                margin-top: 10px;
+                align-items: flex-start;
+            }
+
+            .main-header nav ul li {
+                margin: 5px 0;
+            }
+
+            .contact-container {
+                grid-template-columns: 1fr; /* Una sola columna en móviles */
+                padding: 20px;
+                margin: 20px auto;
+                gap: 20px; /* Espacio entre secciones en móvil */
+            }
+            .contact-info h1, .contact-form-section h2 {
+                font-size: 1.5em;
+            }
+            .map-container {
+                grid-column: 1 / 2; /* El mapa ocupa una columna en móviles */
+                height: 200px; /* Altura del mapa más pequeña en móviles */
+            }
+            .social-icon {
+                width: 35px; /* Ajuste el tamaño de los iconos para móviles */
+            }
+        }
+    </style>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MLJ2W3J0D4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-MLJ2W3J0D4');
+    </script>
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1084140433248821');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1084140433248821&ev=PageView&noscript=1"
+    /></noscript>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="logo">
+            <a href="/">
+                <img src="../img/logo-400.png" alt="Logo Solutions ADS">
+            </a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/servicios.html">Servicios</a></li>
+                <li><a href="/blog.html">Blog</a></li>
+                <li><a href="/contacto.html">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="contact-container">
+        <section class="contact-info">
+            <h1>Ponte en Contacto</h1>
+            <p>Estamos aquí para ayudarte a impulsar tu negocio en el mundo digital. Si tienes alguna pregunta, necesitas un presupuesto personalizado o simplemente quieres charlar sobre tus ideas, no dudes en contactarnos.</p>
+            
+            <h2>Información</h2>
+            <ul>
+                <li><strong>Email:</strong> <a href="mailto:agencia.solutions.ads@gmail.com">agencia.solutions.ads@gmail.com</a></li>
+                <li><strong>Teléfono:</strong> <a href="tel:+5491112345678">+54 9 223 348-5693</a> (ejemplo)</li>
+                <li><strong>Dirección:</strong> Balcarce 3000, Mar del Plata, Buenos Aires, Argentina </li>
+                <li><strong>Horario:</strong> Lunes a Viernes, 9:00 AM - 6:00 PM</li>
+            </ul>
+
+            <h2>Síguenos</h2>
+            <ul class="social-links">
+                <li><a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer"><img src="../img/fb.png" alt="Facebook" class="social-icon"></a></li>
+                <li><a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer"><img src="../img/ig.png" alt="Instagram" class="social-icon"></a></li>
+                <li><a href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer"><img src="../img/in.png" alt="LinkedIn" class="social-icon"></a></li>
+            </ul>
+        </section>
+
+        <section class="contact-form-section">
+            <h2>Envíanos un Mensaje</h2>
+            <form action="gracias.html" method="POST" class="contact-form">
+                <label for="nombre">Nombre Completo:</label>
+                <input type="text" id="nombre" name="nombre" required>
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="telefono">Teléfono (opcional):</label>
+                <input type="tel" id="telefono" name="telefono">
+
+                <label for="mensaje">Tu Mensaje:</label>
+                <textarea id="mensaje" name="mensaje" required></textarea>
+
+                <div class="privacy-checkbox">
+                    <input type="checkbox" id="privacidad" name="privacidad" required>
+                    <label for="privacidad">He leído y acepto la <a href="/politica-de-privacidad.html" target="_blank" rel="noopener noreferrer">Política de Privacidad</a>.</label>
+                </div>
+
+                <button type="submit">Enviar Mensaje</button>
+            </form>
+        </section>
+    </div>
+
+    <div class="map-container">
+        </div>
+
+    <footer class="main-footer">
+        <p>&copy; 2025 Solutions ADS. Todos los derechos reservados.</p>
+    </footer>
+
+</body>
+</html>

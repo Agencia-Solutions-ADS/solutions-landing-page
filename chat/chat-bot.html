@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Luca</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <button id="chatbot-toggle-button" class="chatbot-toggle-button">
+        <i class="fas fa-comments"></i>
+    </button>
+
+    <div id="chatbot-container" class="chatbot-container hidden">
+        <div class="chatbot-header">
+            <img src="../img/logo-400.png" alt="Solutions Ads Logo" class="header-logo">
+            <h3>Luca <span class="online-status"></span></h3>
+            <button id="chatbot-close-button" class="chatbot-close-button">&times;</button>
+        </div>
+        <div class="chatbot-messages" id="chatbot-messages">
+            </div>
+        <div class="chatbot-input-container">
+            <input type="text" id="chatbot-input" placeholder="Escribe tu mensaje...">
+            <button id="chatbot-send-button"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script src="chatbot_test.js"></script>
+
+</body>
+</html>

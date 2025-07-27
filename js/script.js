@@ -194,9 +194,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const email = emailInput.value.trim();
 
         if (!itiInstance || !itiInstance.isValidNumber || !phoneInput) {
-             showStatus(messageElement, 'Error de inicialización de teléfono. Recarga la página.', true);
-             hideStatus(messageElement);
-             return;
+            showStatus(messageElement, 'Error de inicialización de teléfono. Recarga la página.', true);
+            hideStatus(messageElement);
+            return;
         }
 
         const phoneNumber = itiInstance.getNumber(intlTelInputUtils.numberFormat.E164);
@@ -299,8 +299,11 @@ document.addEventListener('DOMContentLoaded', () => {
         showStatus(messageElement, 'Verificando código...');
         messageElement.style.color = 'orange';
 
-        if (registrationFormTop && verifyCodeBtnTop) verifyCodeBtnTop.disabled = true;
-        if (registrationFormBottom && verifyCodeBtnBottom) verifyCodeBtnBottom.disabled = true;
+        // Asegúrate de usar los botones correctos para cada formulario
+        const verifyBtnToDisable = (formType === 'top' && verifyCodeBtnTop) ? verifyCodeBtnTop :
+            (formType === 'bottom' && verifyCodeBtnBottom) ? verifyCodeBtnBottom : null;
+        if (verifyBtnToDisable) verifyBtnToDisable.disabled = true;
+
 
         try {
             const response = await fetch('/.netlify/functions/verify-code', {
@@ -349,8 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (downloadBtnElement) downloadBtnElement.disabled = true;
         } finally {
             hideStatus(messageElement);
-            if (registrationFormTop && verifyCodeBtnTop) verifyCodeBtnTop.disabled = false;
-            if (registrationFormBottom && verifyCodeBtnBottom) verifyCodeBtnBottom.disabled = false;
+            if (verifyBtnToDisable) verifyBtnToDisable.disabled = false;
         }
     }
 
@@ -459,6 +461,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- NUEVO CÓDIGO AÑADIDO: Manejo del botón "Contáctanos" para abrir el modal ---
+    const openModalBtn = document.getElementById('openModalBtn');
+
+    if (openModalBtn && contactModal) { // Asegúrate de que el botón y el modal existan
+        openModalBtn.addEventListener('click', function(event) {
+            event.preventDefault(); // Evita que la página salte al inicio por el href="#"
+            contactModal.style.display = 'block'; // Muestra el modal
+            if (modalFormMessage) modalFormMessage.textContent = ''; // Limpia mensajes previos
+            if (detailsForm) detailsForm.reset(); // Resetea el formulario del modal
+            if (contactTelIti) contactTelIti.setNumber(""); // Limpia el campo de teléfono si intlTelInput está inicializado
+            const contactNameInput = document.getElementById('contactName');
+            if (contactNameInput) contactNameInput.focus(); // Enfoca el primer campo
+        });
+    }
+    // --- FIN DEL NUEVO CÓDIGO ---
+
 
     // --- Validación y Envío del Formulario del Modal ---
     if (detailsForm) {
@@ -546,14 +564,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
 
                 if (response.ok) {
-                    // *** INICIO DE LA MODIFICACIÓN ***
+                    // *** INICIO DE LA MODIFICACIÓN (YA ESTABA EN TU CÓDIGO) ***
                     // Opcional: mostrar un mensaje breve antes de redirigir
                     if (modalFormMessage) {
                         modalFormMessage.textContent = '¡Solicitud enviada con éxito!';
                         modalFormMessage.style.color = '#25D366'; // Color de éxito
                     }
                     // Redirigir a la página de agradecimiento inmediatamente
-                    window.location.href = '/gracias.html'; 
+                    window.location.href = '/gracias.html';
                     // Ya no necesitamos resetear el formulario ni cerrar el modal aquí
                     // porque la página será reemplazada por gracias.html
                     // *** FIN DE LA MODIFICACIÓN ***
@@ -576,5 +594,103 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
+    }
+
+    // --- FUNCIONALIDAD DEL CARRUSEL ---
+    const carousel = document.querySelector('.service-cards-carousel');
+    const prevBtn = document.querySelector('.carousel-nav-btn.prev-btn');
+    const nextBtn = document.querySelector('.carousel-nav-btn.next-btn');
+    const paginationDotsContainer = document.querySelector('.carousel-pagination');
+
+    // Verifica que los elementos del carrusel existan antes de inicializar la funcionalidad
+    if (carousel && prevBtn && nextBtn && paginationDotsContainer) {
+        const serviceCards = Array.from(carousel.children); // Obtener todas las tarjetas de servicio
+        let currentIndex = 0; // Índice de la tarjeta actualmente visible
+
+        // Función para crear los puntos de paginación
+        const createPaginationDots = () => {
+            paginationDotsContainer.innerHTML = ''; // Limpiar puntos existentes
+            serviceCards.forEach((_, index) => {
+                const dot = document.createElement('div');
+                dot.classList.add('pagination-dot');
+                if (index === currentIndex) {
+                    dot.classList.add('active');
+                }
+                dot.addEventListener('click', () => {
+                    scrollToCard(index);
+                });
+                paginationDotsContainer.appendChild(dot);
+            });
+        };
+
+        // Función para actualizar el estado activo de los puntos de paginación
+        const updatePaginationDots = () => {
+            const dots = document.querySelectorAll('.pagination-dot');
+            dots.forEach((dot, index) => {
+                if (index === currentIndex) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        };
+
+        // Función para desplazar el carrusel a una tarjeta específica
+        const scrollToCard = (index) => {
+            if (index >= 0 && index < serviceCards.length) {
+                currentIndex = index;
+                // Calcula el valor de scroll para centrar la tarjeta
+                const scrollLeftValue = serviceCards[currentIndex].offsetLeft - (carousel.offsetWidth - serviceCards[currentIndex].offsetWidth) / 2;
+                carousel.scrollTo({
+                    left: scrollLeftValue,
+                    behavior: 'smooth'
+                });
+                updatePaginationDots();
+            }
+        };
+
+        // Navegación con botones
+        prevBtn.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                scrollToCard(currentIndex - 1);
+            } else {
+                scrollToCard(serviceCards.length - 1); // Vuelve a la última si está en la primera
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentIndex < serviceCards.length - 1) {
+                scrollToCard(currentIndex + 1);
+            } else {
+                scrollToCard(0); // Vuelve a la primera si está en la última
+            }
+        });
+
+        // Actualizar el índice y los puntos al hacer scroll manualmente
+        carousel.addEventListener('scroll', () => {
+            // Encontrar la tarjeta más cercana al centro del carrusel visible
+            const carouselCenter = carousel.scrollLeft + carousel.offsetWidth / 2;
+            let closestCardIndex = 0;
+            let minDistance = Infinity;
+
+            serviceCards.forEach((card, index) => {
+                const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+                const distance = Math.abs(carouselCenter - cardCenter);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestCardIndex = index;
+                }
+            });
+
+            if (closestCardIndex !== currentIndex) {
+                currentIndex = closestCardIndex;
+                updatePaginationDots();
+            }
+        });
+
+        // Inicializar los puntos de paginación al cargar la página
+        createPaginationDots();
+        // Asegurarse de que la primera tarjeta esté visible y activa al cargar
+        scrollToCard(0);
     }
 });

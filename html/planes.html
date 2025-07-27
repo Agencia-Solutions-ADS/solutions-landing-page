@@ -9,7 +9,7 @@
     <style>
         /* --- Definición de colores de la marca para mayor consistencia --- */
         :root {
-            --brand-blue: #0A192F; /* Azul oscuro de la marca */
+            --brand-blue: #010a16; /* Azul oscuro de la marca */
             --brand-orange: #d24600; /* Naranja/Dorado de la marca (usado en hover de nav) */
             --brand-green: #00C853; /* Verde para precios (un verde vibrante) */
             --text-light: #FFFFFF; /* Texto blanco para fondos oscuros */
@@ -209,7 +209,30 @@
             }
         }
     </style>
-</head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MLJ2W3J0D4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-MLJ2W3J0D4');
+    </script>
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1084140433248821');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1084140433248821&ev=PageView&noscript=1"
+    /></noscript>
+    </head>
 <body class="planes-page">
 
     <header class="planes-header">
@@ -276,15 +299,4 @@
     </footer>
 
 </body>
-
-
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-MLJ2W3J0D4"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-MLJ2W3J0D4');
-</script>
 </html>

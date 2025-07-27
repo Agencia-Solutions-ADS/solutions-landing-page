@@ -323,6 +323,11 @@ footer {
         grid-template-columns: 1fr; /* Una columna en pantallas pequeñas */
         gap: 20px;
     }
+
+    /* Media Query para el nuevo contenedor en móviles */
+    .mvv-content-wrapper {
+        padding: 20px 15px; /* Ajusta el padding para pantallas pequeñas */
+    }
 }
 
 @media (max-width: 480px) {
@@ -661,4 +666,58 @@ footer {
         font-size: 0.95em;
         padding: 10px;
     }
+}
+
+/* --- ESTILOS PARA EL NUEVO CONTENEDOR DE MISIÓN, VISIÓN Y VALORES --- */
+.mvv-content-wrapper {
+    max-width: 1200px; /* Mismo ancho máximo que .container */
+    margin: 0 auto; /* Centra el contenedor */
+    padding: 40px 20px; /* Espaciado interno */
+    box-sizing: border-box; /* Incluye padding en el ancho */
+}
+
+
+/* --- ESTILOS ADICIONALES PARA EL LOGO INDEPENDIENTE Y BOTONES (AHORA FUERA DE MEDIA QUERY) --- */
+
+/* Para el logo independiente en formularios-contacto.html */
+.standalone-logo-container {
+    text-align: center; /* Centra el logo si es un div */
+    padding: 20px 0; /* Espaciado superior e inferior */
+    background-color: #010816; /* Fondo oscuro, similar al hero */
+}
+
+.standalone-logo-container img {
+    max-width: 180px; /* Tamaño máximo para el logo, igual que en hero */
+    height: auto;
+    display: block; /* Asegura que se centre correctamente */
+    margin: 0 auto; /* Centra la imagen */
+}
+
+/* Estilos para el botón btn-primary (usado en final-cta-section) */
+.btn {
+    display: inline-block; /* Para que puedas aplicar padding y margin */
+    padding: 15px 30px;
+    border-radius: 5px;
+    font-size: 1.1em;
+    font-weight: bold;
+    text-decoration: none; /* Quita el subrayado de los links */
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-top: 20px;
+}
+
+.btn-primary {
+    background-color: #d24600; /* Naranja oscuro, como tus botones principales */
+    color: #ffffff; /* Texto blanco */
+    border: 2px solid #d24600; /* Borde del mismo color */
+}
+
+.btn-primary:hover {
+    background-color: #e89f00; /* Naranja claro al pasar el mouse */
+    border-color: #e89f00;
+}
+
+/* Ajuste para el texto "O contáctanos..." */
+.final-cta-section .note {
+    margin-top: 15px; /* Reduce el margen superior para acercarlo al botón */
+    color: #555;
 }
