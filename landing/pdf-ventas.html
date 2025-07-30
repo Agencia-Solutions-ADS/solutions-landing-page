@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tu Guía para Convertir Leads en Ventas - Solutions ADS</title>
-    <link rel="stylesheet" href="../css/style.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/css/intlTelInput.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/css/intlTelInput.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,7 +36,8 @@
     src="https://www.facebook.com/tr?id=884102283084133&ev=PageView&noscript=1"
     /></noscript>
 </head>
-<body class="landing-body"> <div class="top-logo">
+<body class="landing-body">
+    <div class="top-logo">
         <a href="../landing/index.html"> <img src="../img/logo-400.png" alt="Solutions ADS Logo"> </a>
     </div>
 
@@ -82,6 +84,41 @@
                 <p class="form-message" id="formMessageTop"></p>
             </form>
         </div>
+
+        <div class="form-pdf-container">
+            <form id="downloadFormBottom">
+                <div class="form-group">
+                    <label for="nameBottom">Nombre <span class="required">*</span></label>
+                    <input type="text" id="nameBottom" name="nameBottom" placeholder="Tu nombre" required>
+                    <div class="error-message" id="nameBottomError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="emailBottom">Email <span class="required">*</span></label>
+                    <input type="email" id="emailBottom" name="emailBottom" placeholder="tu@email.com" required>
+                    <div class="error-message" id="emailBottomError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="phoneBottom">Teléfono (con código de país) <span class="required">*</span></label>
+                    <input type="tel" id="phoneBottom" name="phoneBottom" required>
+                    <div class="error-message" id="phoneBottomError"></div>
+                </div>
+
+                <button type="button" id="sendCodeBtnBottom">Solicitar Código de Validación</button>
+
+                <div class="form-group verification-code-group-bottom" style="display: none;">
+                    <label for="verificationCodeBottom">Código de Validación:</label>
+                    <input type="text" id="verificationCodeBottom" name="verificationCodeBottom" maxlength="6">
+                    <div class="code-timer-container">
+                        <span id="countdownTimerBottom"></span>
+                        <button type="button" id="resendCodeBtnBottom" style="display: none;" disabled>Reenviar Código</button>
+                    </div>
+                    <button type="button" id="verifyCodeBtnBottom">Validar Código</button>
+                </div>
+
+                <button type="button" id="downloadBtnBottom" disabled>¡Sí, Quiero Mi Guía Gratuita y Multiplicar Mis Ventas!</button>
+                <p class="form-message" id="formMessageBottom"></p>
+            </form>
+        </div>
     </section>
 
     <footer class="main-footer"> 
@@ -92,5 +129,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/intlTelInput.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js"></script> 
-    <script src="../js/script.js"></script> </body>
+    <script src="../js/script.js"></script>
+</body>
 </html>
+
