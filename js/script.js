@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const sendCodeBtn = document.getElementById('sendCodeBtn');
         const verificationCodeInput = document.getElementById('verificationCode');
         const verificationCodeGroup = registrationForm.querySelector('.verification-code-group');
-        const verifyCodeBtn = document.getElementById('verifyCodeBtn');
+        const verifyCodeBtn = document.getElementById('verifyCodeBtn'); // Correctly declared
         const statusMessage = registrationForm.querySelector('.form-message');
         const downloadBtn = document.getElementById('downloadBtn');
         const nameInput = document.getElementById('name');
@@ -326,7 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        verifyCodeBtn.addEventListener('click', async () => {
+        verifyCodeBtn.addEventListener('click', async () => { // Changed from verifyCodeBtnTop
             if (!isCodeSent) {
                 statusMessage.textContent = 'Primero solicita un código.';
                 statusMessage.className = 'form-message error';
