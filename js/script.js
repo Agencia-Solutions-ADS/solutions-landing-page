@@ -1,618 +1,28 @@
-// solutions/script.js
+// solutions/js/script.js
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- Variables y Lógica para Formularios de PDF (presentes en pdf-ventas.html) ---
-    // Referencias a los elementos para el FORMULARIO SUPERIOR
-    const registrationFormTop = document.getElementById('downloadForm');
-    let itiTop; // Declarar aquí para que sea accesible en todo el scope de DOMContentLoaded
-
-    if (registrationFormTop) { // Solo si estamos en pdf-ventas.html
-        const sendCodeBtnTop = document.getElementById('sendCodeBtn');
-        const verificationCodeInputTop = document.getElementById('verificationCode');
-        const verificationCodeGroupTop = registrationFormTop.querySelector('.verification-code-group');
-        const verifyCodeBtnTop = document.getElementById('verifyCodeBtn');
-        const statusMessageTop = registrationFormTop.querySelector('.form-message');
-        const downloadBtnTop = document.getElementById('downloadBtn');
-        const nameInputTop = document.getElementById('name');
-        const emailInputTop = document.getElementById('email');
-        const phoneInputTop = document.getElementById('phone');
-        const countdownTimerElementTop = document.getElementById('countdownTimerTop');
-        const resendCodeBtnTop = document.getElementById('resendCodeBtnTop');
-
-        // Inicializar intl-tel-input para el formulario superior
-        itiTop = window.intlTelInput(phoneInputTop, {
-            initialCountry: "ar",
-            preferredCountries: ["ar", "us", "es", "mx", "cl", "co", "pe"],
-            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js"
-        });
-
-        const formInputsTop = [nameInputTop, emailInputTop, phoneInputTop, verificationCodeInputTop];
-
-        if (sendCodeBtnTop) {
-            sendCodeBtnTop.addEventListener('click', () => {
-                handleSendCode('top', nameInputTop, emailInputTop, phoneInputTop, statusMessageTop, verificationCodeGroupTop, sendCodeBtnTop, downloadBtnTop, itiTop, countdownTimerElementTop, resendCodeBtnTop);
-            });
-        }
-        if (verifyCodeBtnTop) {
-            verifyCodeBtnTop.addEventListener('click', () => {
-                handleVerifyCode('top', verificationCodeInputTop, statusMessageTop, downloadBtnTop, verificationCodeGroupTop, sendCodeBtnTop, formInputsTop, countdownTimerElementTop, resendCodeBtnTop);
-            });
-        }
-        if (downloadBtnTop) {
-            downloadBtnTop.addEventListener('click', (e) => {
-                e.preventDefault();
-                handleDownloadAndReset(statusMessageTop, downloadBtnTop, sendCodeBtnTop, verificationCodeGroupTop, registrationFormTop, verificationCodeInputTop, formInputsTop, itiTop, countdownIntervalTop, countdownTimerElementTop, resendCodeBtnTop);
-            });
-        }
-        if (resendCodeBtnTop) {
-            resendCodeBtnTop.addEventListener('click', () => {
-                handleSendCode('top', nameInputTop, emailInputTop, phoneInputTop, statusMessageTop, verificationCodeGroupTop, sendCodeBtnTop, downloadBtnTop, itiTop, countdownTimerElementTop, resendCodeBtnTop);
-            });
-        }
-    }
-
-    // Referencias a los elementos para el FORMULARIO INFERIOR
-    const registrationFormBottom = document.getElementById('downloadFormBottom');
-    let itiBottom; // Declarar aquí para que sea accesible en todo el scope de DOMContentLoaded
-
-    if (registrationFormBottom) { // Solo si estamos en pdf-ventas.html
-        const sendCodeBtnBottom = document.getElementById('sendCodeBtnBottom');
-        const verificationCodeInputBottom = document.getElementById('verificationCodeBottom');
-        const verificationCodeGroupBottom = registrationFormBottom.querySelector('.verification-code-group-bottom');
-        const verifyCodeBtnBottom = document.getElementById('verifyCodeBtnBottom');
-        const statusMessageBottom = registrationFormBottom.querySelector('.form-message');
-        const downloadBtnBottom = document.getElementById('downloadBtnBottom');
-        const nameInputBottom = document.getElementById('nameBottom');
-        const emailInputBottom = document.getElementById('emailBottom');
-        const phoneInputBottom = document.getElementById('phoneBottom');
-        const countdownTimerElementBottom = document.getElementById('countdownTimerBottom');
-        const resendCodeBtnBottom = document.getElementById('resendCodeBtnBottom');
-
-        // Inicializar intl-tel-input para el formulario inferior
-        itiBottom = window.intlTelInput(phoneInputBottom, {
-            initialCountry: "ar",
-            preferredCountries: ["ar", "us", "es", "mx", "cl", "co", "pe"],
-            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js"
-        });
-
-        const formInputsBottom = [nameInputBottom, emailInputBottom, phoneInputBottom, verificationCodeInputBottom];
-
-        if (sendCodeBtnBottom) {
-            sendCodeBtnBottom.addEventListener('click', () => {
-                handleSendCode('bottom', nameInputBottom, emailInputBottom, phoneInputBottom, statusMessageBottom, verificationCodeGroupBottom, sendCodeBtnBottom, downloadBtnBottom, itiBottom, countdownTimerElementBottom, resendCodeBtnBottom);
-            });
-        }
-        if (verifyCodeBtnBottom) {
-            verifyCodeBtnBottom.addEventListener('click', () => {
-                handleVerifyCode('bottom', verificationCodeInputBottom, statusMessageBottom, downloadBtnBottom, verificationCodeGroupBottom, sendCodeBtnBottom, formInputsBottom, countdownTimerElementBottom, resendCodeBtnBottom);
-            });
-        }
-        if (downloadBtnBottom) {
-            downloadBtnBottom.addEventListener('click', (e) => {
-                e.preventDefault();
-                handleDownloadAndReset(statusMessageBottom, downloadBtnBottom, sendCodeBtnBottom, verificationCodeGroupBottom, registrationFormBottom, verificationCodeInputBottom, formInputsBottom, itiBottom, countdownIntervalBottom, countdownTimerElementBottom, resendCodeBtnBottom);
-            });
-        }
-        if (resendCodeBtnBottom) {
-            resendCodeBtnBottom.addEventListener('click', () => {
-                handleSendCode('bottom', nameInputBottom, emailInputBottom, phoneInputBottom, statusMessageBottom, verificationCodeGroupBottom, sendCodeBtnBottom, downloadBtnBottom, itiBottom, countdownTimerElementBottom, resendCodeBtnBottom);
-            });
-        }
-    }
-
-    // Estado global para cada formulario de PDF
-    let currentPhoneNumber = { top: '', bottom: '' };
-    let currentName = { top: '', bottom: '' };
-    let currentEmail = { top: '', bottom: '' };
-
-    // Variables para el contador de PDF forms
-    let countdownIntervalTop;
-    let countdownIntervalBottom;
-    const RESEND_TIMER_SECONDS = 300; // 5 minutos * 60 segundos
-
-
-    // Función para mostrar mensajes de estado para un formulario específico
-    function showStatus(messageElement, message, isError = false) {
-        if (messageElement) {
-            messageElement.textContent = message;
-            messageElement.style.color = isError ? 'red' : 'green';
-            messageElement.style.display = 'block';
-        }
-    }
-
-    // Ocultar mensaje de estado después de un tiempo
-    function hideStatus(messageElement) {
-        if (messageElement) {
-            setTimeout(() => {
-                messageElement.style.display = 'none';
-                messageElement.textContent = '';
-            }, 5000);
-        }
-    }
-
-    // Función de validación de email
-    function isValidEmail(email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    }
-
-    // Función para iniciar el contador y manejar el botón de reenvío
-    function startCountdown(formType, timerElement, resendBtnElement, sendBtnElement) {
-        let timeLeft = RESEND_TIMER_SECONDS;
-
-        if (formType === 'top' && countdownIntervalTop) {
-            clearInterval(countdownIntervalTop);
-        } else if (formType === 'bottom' && countdownIntervalBottom) {
-            clearInterval(countdownIntervalBottom);
-        }
-
-        if (resendBtnElement) {
-            resendBtnElement.style.display = 'none';
-            resendBtnElement.disabled = true;
-        }
-
-        if (timerElement) {
-            timerElement.style.display = 'inline';
-        }
-
-        const intervalId = setInterval(() => {
-            if (timerElement) {
-                const minutes = Math.floor(timeLeft / 60);
-                const seconds = timeLeft % 60;
-                timerElement.textContent = `Puedes reenviar el código en ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            }
-
-            if (timeLeft <= 0) {
-                clearInterval(intervalId);
-                if (timerElement) {
-                    timerElement.textContent = '';
-                    timerElement.style.display = 'none';
-                }
-                if (resendBtnElement) {
-                    resendBtnElement.style.display = 'block';
-                    resendBtnElement.disabled = false;
-                }
-                if (sendBtnElement) {
-                    sendBtnElement.style.display = 'none';
-                }
-            }
-            timeLeft--;
-        }, 1000);
-
-        if (formType === 'top') {
-            countdownIntervalTop = intervalId;
-        } else {
-            countdownIntervalBottom = intervalId;
-        }
-    }
-
-
-    // Función genérica para manejar el envío del código (PARA PDF Forms)
-    async function handleSendCode(formType, nameInput, emailInput, phoneInput, messageElement, verificationGroupElement, sendBtnElement, downloadBtnElement, itiInstance, timerElement, resendBtnElement) {
-        const name = nameInput.value.trim();
-        const email = emailInput.value.trim();
-
-        if (!itiInstance || !itiInstance.isValidNumber || !phoneInput) {
-            showStatus(messageElement, 'Error de inicialización de teléfono. Recarga la página.', true);
-            hideStatus(messageElement);
-            return;
-        }
-
-        const phoneNumber = itiInstance.getNumber(intlTelInputUtils.numberFormat.E164);
-
-        if (!itiInstance.isValidNumber()) {
-            showStatus(messageElement, 'Número de teléfono no válido o incompleto para el país seleccionado.', true);
-            hideStatus(messageElement);
-            return;
-        }
-
-        if (!name || !email || !phoneNumber) {
-            showStatus(messageElement, 'Por favor, completa todos los campos.', true);
-            hideStatus(messageElement);
-            return;
-        }
-
-        if (!isValidEmail(email)) {
-            showStatus(messageElement, 'Por favor, ingresa una dirección de correo electrónico válida (ej. usuario@dominio.com).', true);
-            hideStatus(messageElement);
-            return;
-        }
-
-        currentPhoneNumber[formType] = phoneNumber;
-        currentName[formType] = name;
-        currentEmail[formType] = email;
-
-        showStatus(messageElement, 'Enviando código de verificación...');
-        messageElement.style.color = 'orange';
-
-        if (sendBtnElement) sendBtnElement.disabled = true;
-        if (downloadBtnElement) {
-            downloadBtnElement.disabled = true;
-            downloadBtnElement.style.cursor = 'not-allowed';
-        }
-
-
-        try {
-            const response = await fetch('/.netlify/functions/send-code', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    phoneNumber: currentPhoneNumber[formType],
-                    name: currentName[formType],
-                    email: currentEmail[formType]
-                })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                showStatus(messageElement, data.message || 'Código enviado con éxito. Por favor, verifica tu teléfono.');
-                if (verificationGroupElement) verificationGroupElement.style.display = 'block';
-                if (sendBtnElement) sendBtnElement.style.display = 'none';
-
-                startCountdown(formType, timerElement, resendBtnElement, sendBtnElement);
-
-            } else {
-                showStatus(messageElement, data.message || 'Error al enviar el código.', true);
-                if (sendBtnElement) sendBtnElement.style.display = 'block';
-                // También ocultar el contador si hay un error y no se envía el código
-                if (formType === 'top') {
-                    if (countdownIntervalTop) clearInterval(countdownIntervalTop);
-                    if (timerElement) { timerElement.textContent = ''; timerElement.style.display = 'none'; }
-                    if (resendBtnElement) { resendBtnElement.style.display = 'none'; resendBtnElement.disabled = true; }
-                } else {
-                    if (countdownIntervalBottom) clearInterval(countdownIntervalBottom);
-                    if (timerElement) { timerElement.textContent = ''; timerElement.style.display = 'none'; }
-                    if (resendBtnElement) { resendBtnElement.style.display = 'none'; resendBtnElement.disabled = true; }
-                }
-            }
-        } catch (error) {
-            console.error('Error al solicitar código:', error);
-            showStatus(messageElement, 'Ocurrió un error de red. Intenta de nuevo más tarde.', true);
-            if (sendBtnElement) sendBtnElement.style.display = 'block';
-            if (formType === 'top') {
-                if (countdownIntervalTop) clearInterval(countdownIntervalTop);
-                if (timerElement) { timerElement.textContent = ''; timerElement.style.display = 'none'; }
-                if (resendBtnElement) { resendCodeBtnTop.style.display = 'none'; resendCodeBtnTop.disabled = true; }
-            } else {
-                if (countdownIntervalBottom) clearInterval(countdownIntervalBottom);
-                if (timerElement) { timerElement.textContent = ''; timerElement.style.display = 'none'; }
-                if (resendBtnElement) { resendCodeBtnBottom.style.display = 'none'; resendCodeBtnBottom.disabled = true; }
-            }
-        } finally {
-            hideStatus(messageElement);
-            if (sendBtnElement) sendBtnElement.disabled = false;
-        }
-    }
-
-    // Función genérica para manejar la verificación del código (PARA PDF Forms)
-    async function handleVerifyCode(formType, codeInput, messageElement, downloadBtnElement, verificationGroupElement, sendBtnElement, formInputs, timerElement, resendBtnElement) {
-        const userInputCode = codeInput.value.trim();
-
-        if (!userInputCode) {
-            showStatus(messageElement, 'Por favor, ingresa el código de verificación.', true);
-            hideStatus(messageElement);
-            return;
-        }
-
-        showStatus(messageElement, 'Verificando código...');
-        messageElement.style.color = 'orange';
-
-        // Asegúrate de usar los botones correctos para cada formulario
-        const verifyBtnToDisable = (formType === 'top' && verifyCodeBtnTop) ? verifyCodeBtnTop :
-            (formType === 'bottom' && verifyCodeBtnBottom) ? verifyCodeBtnBottom : null;
-        if (verifyBtnToDisable) verifyBtnToDisable.disabled = true;
-
-
-        try {
-            const response = await fetch('/.netlify/functions/verify-code', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    phoneNumber: currentPhoneNumber[formType],
-                    userInputCode: userInputCode,
-                    name: currentName[formType],
-                    email: currentEmail[formType]
-                })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                showStatus(messageElement, data.message || 'Código validado. ¡Guía lista para descargar!');
-                if (downloadBtnElement) {
-                    downloadBtnElement.disabled = false;
-                    downloadBtnElement.style.cursor = 'pointer';
-                }
-
-                if (verificationGroupElement) verificationGroupElement.style.display = 'none';
-                if (sendBtnElement) sendBtnElement.style.display = 'none';
-
-                formInputs.forEach(input => { if (input) input.disabled = true; });
-                if (downloadBtnElement) downloadBtnElement.disabled = false;
-
-                if (formType === 'top') {
-                    if (countdownIntervalTop) clearInterval(countdownIntervalTop);
-                    if (timerElement) { timerElement.textContent = ''; timerElement.style.display = 'none'; }
-                    if (resendBtnElement) { resendBtnElement.style.display = 'none'; resendBtnElement.disabled = true; }
-                } else {
-                    if (countdownIntervalBottom) clearInterval(countdownIntervalBottom);
-                    if (timerElement) { timerElement.textContent = ''; timerElement.style.display = 'none'; }
-                    if (resendBtnElement) { resendBtnElement.style.display = 'none'; resendBtnElement.disabled = true; }
-                }
-
-            } else {
-                showStatus(messageElement, data.message || 'Código incorrecto o expirado.', true);
-                if (downloadBtnElement) downloadBtnElement.disabled = true;
-            }
-        } catch (error) {
-            console.error('Error al verificar código:', error);
-            showStatus(messageElement, 'Ocurrió un error de red al verificar. Intenta de nuevo más tarde.', true);
-            if (downloadBtnElement) downloadBtnElement.disabled = true;
-        } finally {
-            hideStatus(messageElement);
-            if (verifyBtnToDisable) verifyBtnToDisable.disabled = false;
-        }
-    }
-
-    // Función genérica para manejar la descarga del PDF y resetear el formulario (PARA PDF Forms)
-    function handleDownloadAndReset(messageElement, downloadBtnElement, sendBtnElement, verificationGroupElement, formElement, verificationCodeInput, formInputs, itiInstance, countdownInterval, countdownTimerElement, resendBtnElement) {
-        window.location.href = '/static/tu-guia-de-ventas.pdf';
-        showStatus(messageElement, '¡Descarga iniciada! Revisa tus descargas.', false);
-
-        formElement.reset();
-        if (sendBtnElement) sendBtnElement.style.display = 'block';
-        if (verificationGroupElement) verificationGroupElement.style.display = 'none';
-        if (downloadBtnElement) {
-            downloadBtnElement.disabled = true;
-            downloadBtnElement.style.cursor = 'not-allowed';
-        }
-        if (verificationCodeInput) verificationCodeInput.value = '';
-
-        formInputs.forEach(input => { if (input) input.disabled = false; });
-
-        if (formElement.id === 'downloadForm') {
-            currentPhoneNumber.top = ''; currentName.top = ''; currentEmail.top = '';
-            if (countdownIntervalTop) clearInterval(countdownIntervalTop);
-        } else if (formElement.id === 'downloadFormBottom') {
-            currentPhoneNumber.bottom = ''; currentName.bottom = ''; currentEmail.bottom = '';
-            if (countdownIntervalBottom) clearInterval(countdownIntervalBottom);
-        }
-
-        if (countdownTimerElement) { countdownTimerElement.textContent = ''; countdownTimerElement.style.display = 'none'; }
-        if (resendBtnElement) { resendBtnElement.style.display = 'none'; resendBtnElement.disabled = true; }
-        if (itiInstance) itiInstance.setNumber("");
-    }
-
-
-    // --- Funcionalidad para botones de Planes y Modal de Contacto (presentes en index.html) ---
-
-    // URL base de WhatsApp con tu número
-    const whatsappBaseURL = "https://wa.me/+5492233553998?text="; // <--- ¡TU NÚMERO AQUÍ!
-
-    // Selecciona todos los botones de WhatsApp de los planes
-    const whatsappPlanButtons = document.querySelectorAll('.whatsapp-plan-btn');
-
-    whatsappPlanButtons.forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault();
-            const planName = this.dataset.plan;
-            const message = `Hola, me interesa el ${planName} y quisiera más información.`;
-            const encodedMessage = encodeURIComponent(message);
-            const fullWhatsappURL = whatsappBaseURL + encodedMessage;
-            window.open(fullWhatsappURL, '_blank');
-        });
-    });
-
-    // --- FUNCIONALIDAD DEL MODAL Y FORMULARIO DE CONTACTO (en index.html) ---
-
-    // Obtener elementos del DOM del modal
-    const contactModal = document.getElementById('contactModal');
-    const closeButton = document.querySelector('.close-button');
-    const detailsForm = document.getElementById('detailsForm');
-    const modalFormMessage = document.getElementById('modalFormMessage');
-    const planOfInterestInput = document.getElementById('planOfInterest');
-
-    let contactTelIti;
-    const contactTelInput = document.getElementById("contactTel");
-
-    // Inicializar intl-tel-input para el campo de teléfono del modal SOLO SI EL MODAL EXISTE (estamos en index.html)
-    if (contactTelInput) {
-        contactTelIti = window.intlTelInput(contactTelInput, {
-            preferredCountries: ["ar"],
-            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js",
-        });
-    }
-
-    // Selecciona todos los botones de formulario de los planes (solo una vez)
-    const formPlanButtons = document.querySelectorAll('.form-plan-btn');
-
-    // CONSOLIDACIÓN: Los botones de formulario ahora abren el modal directamente
-    formPlanButtons.forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault();
-            if (contactModal) {
-                const planName = this.dataset.plan;
-                if (planOfInterestInput) planOfInterestInput.value = planName;
-                contactModal.style.display = 'block';
-                if (modalFormMessage) modalFormMessage.textContent = '';
-                if (detailsForm) detailsForm.reset();
-                if (contactTelIti) contactTelIti.setNumber("");
-                const contactNameInput = document.getElementById('contactName');
-                if (contactNameInput) contactNameInput.focus();
-            }
-        });
-    });
-
-    // Event listener para cerrar el modal al hacer clic en la "X"
-    if (closeButton) {
-        closeButton.addEventListener('click', function() {
-            if (contactModal) contactModal.style.display = 'none';
-        });
-    }
-
-    // Event listener para cerrar el modal al hacer clic fuera del contenido
-    if (contactModal) {
-        window.addEventListener('click', function(event) {
-            if (event.target == contactModal) {
-                contactModal.style.display = 'none';
-            }
-        });
-    }
-
-    // --- NUEVO CÓDIGO AÑADIDO: Manejo del botón "Contáctanos" para abrir el modal ---
-    const openModalBtn = document.getElementById('openModalBtn');
-
-    if (openModalBtn && contactModal) { // Asegúrate de que el botón y el modal existan
-        openModalBtn.addEventListener('click', function(event) {
-            event.preventDefault(); // Evita que la página salte al inicio por el href="#"
-            contactModal.style.display = 'block'; // Muestra el modal
-            if (modalFormMessage) modalFormMessage.textContent = ''; // Limpia mensajes previos
-            if (detailsForm) detailsForm.reset(); // Resetea el formulario del modal
-            if (contactTelIti) contactTelIti.setNumber(""); // Limpia el campo de teléfono si intlTelInput está inicializado
-            const contactNameInput = document.getElementById('contactName');
-            if (contactNameInput) contactNameInput.focus(); // Enfoca el primer campo
-        });
-    }
-    // --- FIN DEL NUEVO CÓDIGO ---
-
-
-    // --- Validación y Envío del Formulario del Modal ---
-    if (detailsForm) {
-        detailsForm.addEventListener('submit', async function(event) {
-            event.preventDefault();
-
-            const errorMessages = document.querySelectorAll('.error-message');
-            errorMessages.forEach(msg => { if (msg) msg.style.display = 'none'; });
-            if (modalFormMessage) {
-                modalFormMessage.textContent = '';
-                modalFormMessage.style.color = '';
-            }
-
-            let isValid = true;
-
-            const contactName = document.getElementById('contactName');
-            if (contactName && contactName.value.trim() === '') {
-                const contactNameError = document.getElementById('contactNameError');
-                if (contactNameError) { contactNameError.textContent = 'El nombre es obligatorio.'; contactNameError.style.display = 'block'; }
-                isValid = false;
-            }
-
-            const contactEmail = document.getElementById('contactEmail');
-            if (contactEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail.value.trim())) {
-                const contactEmailError = document.getElementById('contactEmailError');
-                if (contactEmailError) { contactEmailError.textContent = 'Ingrese un correo electrónico válido.'; contactEmailError.style.display = 'block'; }
-                isValid = false;
-            }
-
-            if (contactTelIti && contactTelInput && !contactTelIti.isValidNumber()) {
-                const contactTelError = document.getElementById('contactTelError');
-                if (contactTelError) { contactTelError.textContent = 'Ingrese un número de teléfono válido (incluyendo código de país).'; contactTelError.style.display = 'block'; }
-                isValid = false;
-            }
-
-            const companyName = document.getElementById('companyName');
-            if (companyName && companyName.value.trim() === '') {
-                const companyNameError = document.getElementById('companyNameError');
-                if (companyNameError) { companyNameError.textContent = 'El nombre de la empresa/emprendimiento es obligatorio.'; companyNameError.style.display = 'block'; }
-                isValid = false;
-            }
-
-            const goals = document.getElementById('goals');
-            if (goals && goals.value.trim() === '') {
-                const goalsError = document.getElementById('goalsError');
-                if (goalsError) { goalsError.textContent = 'Los objetivos son obligatorios.'; goalsError.style.display = 'block'; }
-                isValid = false;
-            }
-
-            if (!isValid) {
-                if (modalFormMessage) {
-                    modalFormMessage.textContent = 'Por favor, corrige los errores en el formulario.';
-                    modalFormMessage.style.color = '#d24600';
-                }
-                return;
-            }
-
-            const formData = {
-                contactName: contactName ? contactName.value.trim() : '',
-                contactEmail: contactEmail ? contactEmail.value.trim() : '',
-                contactTel: contactTelIti ? contactTelIti.getNumber() : '',
-                companyName: companyName ? companyName.value.trim() : '',
-                industry: document.getElementById('industry') ? document.getElementById('industry').value.trim() : '',
-                goals: goals ? goals.value.trim() : '',
-                planOfInterest: planOfInterestInput ? planOfInterestInput.value : ''
-            };
-
-            const submitButton = detailsForm.querySelector('button[type="submit"]');
-            if (submitButton) {
-                submitButton.disabled = true;
-                submitButton.textContent = 'Enviando...';
-            }
-            if (modalFormMessage) {
-                modalFormMessage.textContent = 'Enviando tu solicitud...';
-                modalFormMessage.style.color = '#e89f00';
-            }
-
-            try {
-                const response = await fetch('/.netlify/functions/send-lead', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData),
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    // *** INICIO DE LA MODIFICACIÓN (YA ESTABA EN TU CÓDIGO) ***
-                    // Opcional: mostrar un mensaje breve antes de redirigir
-                    if (modalFormMessage) {
-                        modalFormMessage.textContent = '¡Solicitud enviada con éxito!';
-                        modalFormMessage.style.color = '#25D366'; // Color de éxito
-                    }
-                    // Redirigir a la página de agradecimiento inmediatamente
-                    window.location.href = '/gracias.html';
-                    // Ya no necesitamos resetear el formulario ni cerrar el modal aquí
-                    // porque la página será reemplazada por gracias.html
-                    // *** FIN DE LA MODIFICACIÓN ***
-                } else {
-                    if (modalFormMessage) {
-                        modalFormMessage.textContent = data.message || 'Hubo un error al enviar tu solicitud. Intenta de nuevo.';
-                        modalFormMessage.style.color = '#d24600';
-                    }
-                }
-            } catch (error) {
-                console.error('Error al enviar el formulario:', error);
-                if (modalFormMessage) {
-                    modalFormMessage.textContent = 'Error de conexión. Por favor, verifica tu internet e intenta de nuevo.';
-                    modalFormMessage.style.color = '#d24600';
-                }
-            } finally {
-                if (submitButton) {
-                    submitButton.disabled = false;
-                    submitButton.textContent = 'Enviar Solicitud';
-                }
-            }
-        });
-    }
-
-    // --- FUNCIONALIDAD DEL CARRUSEL ---
-    const carousel = document.querySelector('.service-cards-carousel');
-    const prevBtn = document.querySelector('.carousel-nav-btn.prev-btn');
-    const nextBtn = document.querySelector('.carousel-nav-btn.next-btn');
-    const paginationDotsContainer = document.querySelector('.carousel-pagination');
-
-    // Verifica que los elementos del carrusel existan antes de inicializar la funcionalidad
-    if (carousel && prevBtn && nextBtn && paginationDotsContainer) {
-        const serviceCards = Array.from(carousel.children); // Obtener todas las tarjetas de servicio
-        let currentIndex = 0; // Índice de la tarjeta actualmente visible
+    // ** TU URL DE DESPLIEGUE DE GOOGLE APPS SCRIPT AQUÍ **
+    // ¡IMPORTANTE! Reemplaza 'URL_DE_TU_APPS_SCRIPT_AQUI' con la URL real de tu Google Apps Script desplegado como aplicación web.
+    const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbze3hgEA55a4yyeIoXPEr9Fuhpd_xvMJiFVr9pTTgVyYT7x7lZ4jBNUEZCVbsXIrls3/exec'; 
+
+    // --- Lógica para el Carousel de Servicios (en landing/index.html) ---
+    const carouselWrapper = document.querySelector('.carousel-wrapper');
+    if (carouselWrapper) { // Solo ejecutar si el carrusel existe en la página
+        const carousel = carouselWrapper.querySelector('.service-cards-carousel');
+        const serviceCards = Array.from(carousel.querySelectorAll('.service-card'));
+        const prevBtn = carouselWrapper.querySelector('.prev-btn');
+        const nextBtn = carouselWrapper.querySelector('.next-btn');
+        const paginationDotsContainer = carouselWrapper.querySelector('.carousel-pagination');
+
+        let currentIndex = 0;
 
         // Función para crear los puntos de paginación
-        const createPaginationDots = () => {
+        function createPaginationDots() {
             paginationDotsContainer.innerHTML = ''; // Limpiar puntos existentes
             serviceCards.forEach((_, index) => {
-                const dot = document.createElement('div');
-                dot.classList.add('pagination-dot');
+                const dot = document.createElement('span');
+                dot.classList.add('dot');
                 if (index === currentIndex) {
                     dot.classList.add('active');
                 }
@@ -621,11 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 paginationDotsContainer.appendChild(dot);
             });
-        };
+        }
 
         // Función para actualizar el estado activo de los puntos de paginación
-        const updatePaginationDots = () => {
-            const dots = document.querySelectorAll('.pagination-dot');
+        function updatePaginationDots() {
+            const dots = paginationDotsContainer.querySelectorAll('.dot');
             dots.forEach((dot, index) => {
                 if (index === currentIndex) {
                     dot.classList.add('active');
@@ -633,21 +43,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     dot.classList.remove('active');
                 }
             });
-        };
+        }
 
         // Función para desplazar el carrusel a una tarjeta específica
-        const scrollToCard = (index) => {
-            if (index >= 0 && index < serviceCards.length) {
-                currentIndex = index;
-                // Calcula el valor de scroll para centrar la tarjeta
-                const scrollLeftValue = serviceCards[currentIndex].offsetLeft - (carousel.offsetWidth - serviceCards[currentIndex].offsetWidth) / 2;
-                carousel.scrollTo({
-                    left: scrollLeftValue,
-                    behavior: 'smooth'
-                });
-                updatePaginationDots();
-            }
-        };
+        function scrollToCard(index) {
+            currentIndex = index;
+            const scrollLeft = serviceCards[currentIndex].offsetLeft - (carousel.offsetWidth - serviceCards[currentIndex].offsetWidth) / 2;
+            carousel.scrollTo({
+                left: scrollLeft,
+                behavior: 'smooth'
+            });
+            updatePaginationDots();
+        }
 
         // Navegación con botones
         prevBtn.addEventListener('click', () => {
@@ -668,7 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Actualizar el índice y los puntos al hacer scroll manualmente
         carousel.addEventListener('scroll', () => {
-            // Encontrar la tarjeta más cercana al centro del carrusel visible
             const carouselCenter = carousel.scrollLeft + carousel.offsetWidth / 2;
             let closestCardIndex = 0;
             let minDistance = Infinity;
@@ -692,5 +98,555 @@ document.addEventListener('DOMContentLoaded', () => {
         createPaginationDots();
         // Asegurarse de que la primera tarjeta esté visible y activa al cargar
         scrollToCard(0);
+    }
+
+    // --- Lógica del Modal de Contacto (usado en formularios-contacto.html y planes.html) ---
+    const modal = document.getElementById('contactModal');
+    const closeBtn = document.querySelector('.modal-close-btn');
+    const openModalBtns = document.querySelectorAll('.open-modal-btn');
+    const planOfInterestInput = document.getElementById('planOfInterest');
+
+    if (modal) { // Solo si el modal existe en la página
+        openModalBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const plan = btn.dataset.plan;
+                if (planOfInterestInput) {
+                    planOfInterestInput.value = plan ? `Interesado en Plan: ${plan}` : 'Consulta General';
+                }
+                modal.style.display = 'block';
+                document.body.classList.add('no-scroll'); // Evitar scroll del body
+            });
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+            document.body.classList.remove('no-scroll');
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+                document.body.classList.remove('no-scroll');
+            }
+        });
+    }
+
+    // --- Funciones de Utilidad de Validación de Formularios ---
+    // Función para mostrar mensajes de error
+    function displayError(element, message) {
+        if (element) {
+            const errorDiv = document.getElementById(element.id + 'Error');
+            if (errorDiv) {
+                errorDiv.textContent = message;
+                errorDiv.style.display = message ? 'block' : 'none';
+            }
+        }
+    }
+
+    // Función de validación de email
+    function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(String(email).toLowerCase());
+    }
+
+    // --- Lógica para el Formulario de Descarga de PDF (en landing/pdf-ventas.html) ---
+    const registrationForm = document.getElementById('downloadForm');
+    let iti; // Variable para la instancia de intlTelInput
+
+    if (registrationForm) { // Solo si estamos en pdf-ventas.html
+        const sendCodeBtn = document.getElementById('sendCodeBtn');
+        const verificationCodeInput = document.getElementById('verificationCode');
+        const verificationCodeGroup = registrationForm.querySelector('.verification-code-group');
+        const verifyCodeBtn = document.getElementById('verifyCodeBtn');
+        const statusMessage = registrationForm.querySelector('.form-message');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const phoneInput = document.getElementById('phone');
+        const countdownTimerElement = document.getElementById('countdownTimerTop');
+        const resendCodeBtn = document.getElementById('resendCodeBtnTop');
+
+        let countdownInterval;
+        let timeLeft = 60; // 60 segundos para el código
+        let canResend = false;
+        let isCodeSent = false; // Bandera para controlar si se ha solicitado un código
+
+        // Inicializar intl-tel-input para el formulario de PDF
+        iti = window.intlTelInput(phoneInput, {
+            initialCountry: "ar", // País inicial
+            separateDialCode: true, // Mostrar código de país separado
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js" // Para formateo y validación
+        });
+
+        const startCountdown = () => {
+            timeLeft = 60;
+            canResend = false;
+            resendCodeBtn.disabled = true;
+            countdownTimerElement.style.display = 'inline'; // Mostrar timer
+            countdownTimerElement.textContent = `Reenviar en ${timeLeft}s`; // Mensaje inicial
+            clearInterval(countdownInterval); // Asegurar que no haya múltiples intervalos
+            countdownInterval = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    countdownTimerElement.textContent = 'Código expirado. Puedes reenviar.';
+                    canResend = true;
+                    resendCodeBtn.style.display = 'inline';
+                    resendCodeBtn.disabled = false;
+                } else {
+                    countdownTimerElement.textContent = `Reenviar en ${timeLeft}s`;
+                    timeLeft--;
+                }
+            }, 1000);
+        };
+
+        const validateFormFields = () => {
+            let isValid = true;
+            displayError(nameInput, '');
+            displayError(emailInput, '');
+            displayError(phoneInput, '');
+
+            if (!nameInput.value.trim()) {
+                displayError(nameInput, 'El nombre es requerido.');
+                isValid = false;
+            }
+            if (!validateEmail(emailInput.value)) {
+                displayError(emailInput, 'Por favor, introduce un email válido.');
+                isValid = false;
+            }
+            // Validar que el número sea válido según intl-tel-input
+            if (!iti.isValidNumber()) {
+                let errorCode = iti.getValidationError();
+                let errorMessage = 'Número de teléfono no válido.';
+                switch (errorCode) {
+                    case intlTelInputUtils.validationError.IS_POSSIBLE: errorMessage = 'Número posiblemente incompleto.'; break;
+                    case intlTelInputUtils.validationError.INVALID_NUMBER: errorMessage = 'Número no válido.'; break;
+                    case intlTelInputUtils.validationError.TOO_SHORT: errorMessage = 'Número demasiado corto.'; break;
+                    case intlTelInputUtils.validationError.TOO_LONG: errorMessage = 'Número demasiado largo.'; break;
+                    case intlTelInputUtils.validationError.NOT_A_NUMBER: errorMessage = 'No es un número.'; break;
+                    default: errorMessage = 'Número de teléfono no válido.'; break; // Manejo para errores no mapeados
+                }
+                displayError(phoneInput, errorMessage);
+                isValid = false;
+            }
+            return isValid;
+        };
+
+        sendCodeBtn.addEventListener('click', async () => {
+            if (!validateFormFields()) {
+                return; // Detener si hay errores de validación
+            }
+
+            statusMessage.textContent = 'Enviando código...';
+            statusMessage.className = 'form-message loading';
+            
+            // Obtener el número de teléfono en formato internacional completo
+            const fullPhoneNumber = iti.getNumber();
+
+            try {
+                const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors', // Necesario para CORS en Apps Script
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8', // Apps Script espera text/plain para JSON.parse(e.postData.contents)
+                    },
+                    body: JSON.stringify({
+                        action: 'saveCode',
+                        phoneNumber: fullPhoneNumber,
+                        code: Math.floor(100000 + Math.random() * 900000).toString(), // Genera el código aquí para enviarlo a Apps Script
+                        name: nameInput.value.trim(),
+                        email: emailInput.value.trim()
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.message.includes('enviado')) {
+                    isCodeSent = true;
+                    statusMessage.textContent = data.message;
+                    statusMessage.className = 'form-message success';
+                    verificationCodeGroup.style.display = 'block';
+                    sendCodeBtn.style.display = 'none'; // Ocultar botón de enviar código
+                    startCountdown();
+                } else {
+                    statusMessage.textContent = data.message || 'Error al solicitar el código.';
+                    statusMessage.className = 'form-message error';
+                }
+            } catch (error) {
+                console.error('Error al enviar solicitud de código:', error);
+                statusMessage.textContent = 'Error de conexión. Inténtalo más tarde.';
+                statusMessage.className = 'form-message error';
+            }
+        });
+
+        resendCodeBtn.addEventListener('click', async () => {
+            if (!canResend) return;
+
+            if (!validateFormFields()) {
+                return;
+            }
+
+            statusMessage.textContent = 'Reenviando código...';
+            statusMessage.className = 'form-message loading';
+            clearInterval(countdownInterval);
+            countdownTimerElement.style.display = 'none';
+            resendCodeBtn.style.display = 'none';
+
+            const fullPhoneNumber = iti.getNumber();
+
+            try {
+                const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8',
+                    },
+                    body: JSON.stringify({
+                        action: 'saveCode',
+                        phoneNumber: fullPhoneNumber,
+                        code: Math.floor(100000 + Math.random() * 900000).toString(), // Nuevo código
+                        name: nameInput.value.trim(),
+                        email: emailInput.value.trim()
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.message.includes('enviado')) {
+                    statusMessage.textContent = data.message;
+                    statusMessage.className = 'form-message success';
+                    startCountdown();
+                } else {
+                    statusMessage.textContent = data.message || 'Error al reenviar el código.';
+                    statusMessage.className = 'form-message error';
+                }
+            } catch (error) {
+                console.error('Error al reenviar solicitud de código:', error);
+                statusMessage.textContent = 'Error de conexión al reenviar.';
+                statusMessage.className = 'form-message error';
+            }
+        });
+
+        verifyCodeBtn.addEventListener('click', async () => {
+            if (!isCodeSent) {
+                statusMessage.textContent = 'Primero solicita un código.';
+                statusMessage.className = 'form-message error';
+                return;
+            }
+
+            const enteredCode = verificationCodeInput.value.trim();
+            if (!enteredCode) {
+                statusMessage.textContent = 'Ingresa el código de validación.';
+                statusMessage.className = 'form-message error';
+                return;
+            }
+
+            statusMessage.textContent = 'Verificando código...';
+            statusMessage.className = 'form-message loading';
+
+            const fullPhoneNumber = iti.getNumber();
+
+            try {
+                const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8',
+                    },
+                    body: JSON.stringify({
+                        action: 'verifyCode',
+                        phoneNumber: fullPhoneNumber,
+                        userInputCode: enteredCode,
+                        name: nameInput.value.trim(),
+                        email: emailInput.value.trim()
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.message.includes('validado')) {
+                    clearInterval(countdownInterval); // Detener el contador al validar
+                    statusMessage.textContent = data.message;
+                    statusMessage.className = 'form-message success';
+                    downloadBtn.disabled = false; // Habilitar el botón de descarga
+                    verificationCodeInput.disabled = true; // Deshabilitar input de código
+                    verifyCodeBtn.disabled = true; // Deshabilitar botón de verificar
+                    countdownTimerElement.style.display = 'none'; // Ocultar el contador
+                    resendCodeBtn.style.display = 'none'; // Ocultar reenviar
+                    // Redirigir a la página de gracias después de un pequeño retraso
+                    setTimeout(() => {
+                        window.location.href = '../html/gracias.html';
+                    }, 1500);
+                } else {
+                    statusMessage.textContent = data.message || 'Error al verificar el código.';
+                    statusMessage.className = 'form-message error';
+                    downloadBtn.disabled = true;
+                }
+            } catch (error) {
+                console.error('Error al verificar código:', error);
+                statusMessage.textContent = 'Error de conexión. Inténtalo más tarde.';
+                statusMessage.className = 'form-message error';
+            }
+        });
+
+        // Asegurarse de limpiar errores al cambiar inputs
+        nameInput.addEventListener('input', () => displayError(nameInput, ''));
+        emailInput.addEventListener('input', () => displayError(emailInput, ''));
+        phoneInput.addEventListener('input', () => displayError(phoneInput, ''));
+        verificationCodeInput.addEventListener('input', () => {
+            if (statusMessage.textContent === 'Código incorrecto. Inténtalo de nuevo.') {
+                statusMessage.textContent = '';
+                statusMessage.className = 'form-message';
+            }
+        });
+    }
+
+    // --- Lógica para el Formulario del Modal (formularios-contacto.html y planes.html) ---
+    const modalContactForm = document.getElementById('modalContactForm');
+    let itiModal; // Variable para la instancia de intlTelInput del modal
+
+    if (modalContactForm) { // Solo si el formulario del modal existe
+        const modalNameInput = document.getElementById('modalName');
+        const modalEmailInput = document.getElementById('modalEmail');
+        const modalTelInput = document.getElementById('modalTel');
+        const companyNameInput = document.getElementById('companyName');
+        const industryInput = document.getElementById('industry'); // Asegúrate de que este input exista o lo maneje
+        const goalsInput = document.getElementById('goals');
+        const modalFormMessage = document.getElementById('modalFormMessage');
+        const planOfInterestInput = document.getElementById('planOfInterest');
+
+
+        // Inicializar intl-tel-input para el formulario del modal
+        itiModal = window.intlTelInput(modalTelInput, {
+            initialCountry: "ar",
+            separateDialCode: true,
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js"
+        });
+
+        // Función de validación para el formulario del modal
+        const validateModalForm = () => {
+            let isValid = true;
+            displayError(modalNameInput, '');
+            displayError(modalEmailInput, '');
+            displayError(modalTelInput, '');
+            displayError(companyNameInput, '');
+            displayError(goalsInput, '');
+
+            if (!modalNameInput.value.trim()) {
+                displayError(modalNameInput, 'El nombre es requerido.');
+                isValid = false;
+            }
+            if (!validateEmail(modalEmailInput.value)) {
+                displayError(modalEmailInput, 'Por favor, introduce un email válido.');
+                isValid = false;
+            }
+            if (!itiModal.isValidNumber()) {
+                let errorCode = itiModal.getValidationError();
+                let errorMessage = 'Número de teléfono no válido.';
+                switch (errorCode) {
+                    case intlTelInputUtils.validationError.IS_POSSIBLE: errorMessage = 'Número posiblemente incompleto.'; break;
+                    case intlTelInputUtils.validationError.INVALID_NUMBER: errorMessage = 'Número no válido.'; break;
+                    case intlTelInputUtils.validationError.TOO_SHORT: errorMessage = 'Número demasiado corto.'; break;
+                    case intlTelInputUtils.validationError.TOO_LONG: errorMessage = 'Número demasiado largo.'; break;
+                    case intlTelInputUtils.validationError.NOT_A_NUMBER: errorMessage = 'No es un número.'; break;
+                    default: errorMessage = 'Número de teléfono no válido.'; break;
+                }
+                displayError(modalTelInput, errorMessage);
+                isValid = false;
+            }
+            if (!companyNameInput.value.trim()) {
+                displayError(companyNameInput, 'El nombre de la empresa es requerido.');
+                isValid = false;
+            }
+            if (!goalsInput.value.trim()) {
+                displayError(goalsInput, 'Tus objetivos son requeridos.');
+                isValid = false;
+            }
+            return isValid;
+        };
+
+        modalContactForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevenir el envío por defecto
+
+            if (validateModalForm()) {
+                modalFormMessage.textContent = 'Enviando su solicitud...';
+                modalFormMessage.className = 'form-message loading';
+
+                const fullPhoneNumber = itiModal.getNumber(); // Obtener número de teléfono completo
+
+                try {
+                    const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'cors',
+                        headers: {
+                            'Content-Type': 'text/plain;charset=utf-8', // Apps Script espera text/plain para JSON.parse(e.postData.contents)
+                        },
+                        body: JSON.stringify({
+                            action: 'saveLead', // Acción para guardar el lead del modal
+                            name: modalNameInput.value.trim(),
+                            email: modalEmailInput.value.trim(),
+                            phoneNumber: fullPhoneNumber,
+                            companyName: companyNameInput.value.trim(),
+                            industry: industryInput ? industryInput.value.trim() : '', // Condicional por si no siempre está
+                            goals: goalsInput.value.trim(),
+                            planOfInterest: planOfInterestInput ? planOfInterestInput.value.trim() : '' // Si aplica
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) { // Apps Script devuelve 200 OK si todo fue bien
+                        modalFormMessage.textContent = data.message || '¡Su solicitud ha sido enviada con éxito!';
+                        modalFormMessage.className = 'form-message success';
+                        // Redirigir a la página de gracias después de un pequeño retraso
+                        setTimeout(() => {
+                            window.location.href = '../html/gracias.html';
+                        }, 1500);
+                    } else {
+                        modalFormMessage.textContent = data.message || 'Error al enviar la solicitud.';
+                        modalFormMessage.className = 'form-message error';
+                    }
+                } catch (error) {
+                    console.error('Error al enviar formulario del modal:', error);
+                    modalFormMessage.textContent = 'Error de conexión. Inténtalo más tarde.';
+                    modalFormMessage.className = 'form-message error';
+                }
+            } else {
+                modalFormMessage.textContent = 'Por favor, corrige los errores en el formulario.';
+                modalFormMessage.className = 'form-message error';
+            }
+        });
+
+        // Limpiar mensajes de error al escribir
+        modalNameInput.addEventListener('input', () => displayError(modalNameInput, ''));
+        modalEmailInput.addEventListener('input', () => displayError(modalEmailInput, ''));
+        modalTelInput.addEventListener('input', () => displayError(modalTelInput, ''));
+        companyNameInput.addEventListener('input', () => displayError(companyNameInput, ''));
+        goalsInput.addEventListener('input', () => displayError(goalsInput, ''));
+    }
+
+    // --- Lógica para el Formulario de Contacto (en html/contacto.html) ---
+    const mainContactForm = document.querySelector('.contact-form-section .contact-form');
+
+    if (mainContactForm) { // Solo si el formulario principal de contacto existe
+        const nombreInput = document.getElementById('nombre');
+        const emailInput = document.getElementById('email');
+        const telefonoInput = document.getElementById('telefono'); 
+        const mensajeInput = document.getElementById('mensaje');
+        const privacidadCheckbox = document.getElementById('privacidad');
+
+        // Para el formulario de contacto principal, puedes inicializar intl-tel-input si es que 
+        // deseas usarlo para validación en el campo de teléfono opcional.
+        let itiMainContact;
+        if (telefonoInput) {
+            itiMainContact = window.intlTelInput(telefonoInput, {
+                initialCountry: "ar",
+                separateDialCode: true,
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js"
+            });
+        }
+
+        // Función de validación para el formulario principal de contacto
+        const validateMainContactForm = () => {
+            let isValid = true;
+            displayError(nombreInput, '');
+            displayError(emailInput, '');
+            displayError(mensajeInput, '');
+            // displayError(telefonoInput, ''); // Si se requiere un div de error específico para teléfono
+
+            if (!nombreInput.value.trim()) {
+                displayError(nombreInput, 'El nombre es requerido.');
+                isValid = false;
+            }
+            if (!validateEmail(emailInput.value)) {
+                displayError(emailInput, 'Por favor, introduce un email válido.');
+                isValid = false;
+            }
+            if (!mensajeInput.value.trim()) {
+                displayError(mensajeInput, 'El mensaje es requerido.');
+                isValid = false;
+            }
+            if (!privacidadCheckbox.checked) {
+                alert('Debes aceptar la política de privacidad.'); // Alerta simple, puedes mejorarla
+                isValid = false;
+            }
+            // Si el teléfono es opcional, solo validar si hay algo escrito
+            if (telefonoInput && telefonoInput.value.trim() !== '' && itiMainContact && !itiMainContact.isValidNumber()) {
+                 let errorCode = itiMainContact.getValidationError();
+                let errorMessage = 'Número de teléfono no válido.';
+                switch (errorCode) {
+                    case intlTelInputUtils.validationError.IS_POSSIBLE: errorMessage = 'Número posiblemente incompleto.'; break;
+                    case intlTelInputUtils.validationError.INVALID_NUMBER: errorMessage = 'Número no válido.'; break;
+                    case intlTelInputUtils.validationError.TOO_SHORT: errorMessage = 'Número demasiado corto.'; break;
+                    case intlTelInputUtils.validationError.TOO_LONG: errorMessage = 'Número demasiado largo.'; break;
+                    case intlTelInputUtils.validationError.NOT_A_NUMBER: errorMessage = 'No es un número.'; break;
+                    default: errorMessage = 'Número de teléfono no válido.'; break;
+                }
+                displayError(telefonoInput, errorMessage);
+                isValid = false;
+            }
+            return isValid;
+        };
+
+        mainContactForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevenir el envío por defecto
+
+            if (validateMainContactForm()) {
+                 // Puedes añadir un mensaje de "Enviando..." si lo deseas
+                // const mainFormStatusMessage = document.getElementById('mainFormStatusMessage'); 
+                // if (mainFormStatusMessage) { 
+                //     mainFormStatusMessage.textContent = 'Enviando mensaje...';
+                //     mainFormStatusMessage.className = 'form-message loading';
+                // }
+
+                const fullPhoneNumber = telefonoInput && telefonoInput.value.trim() !== '' && itiMainContact ? itiMainContact.getNumber() : '';
+
+                try {
+                    const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'cors',
+                        headers: {
+                            'Content-Type': 'text/plain;charset=utf-8',
+                        },
+                        body: JSON.stringify({
+                            action: 'saveContactFormLead', // Nueva acción para el formulario de contacto
+                            name: nombreInput.value.trim(),
+                            email: emailInput.value.trim(),
+                            phoneNumber: fullPhoneNumber,
+                            message: mensajeInput.value.trim()
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        // Si el backend responde OK, redirigimos a la página de gracias
+                        window.location.href = 'gracias.html';
+                    } else {
+                        // if (mainFormStatusMessage) {
+                        //     mainFormStatusMessage.textContent = data.message || 'Hubo un error al enviar el mensaje. Por favor, inténtalo de nuevo.';
+                        //     mainFormStatusMessage.className = 'form-message error';
+                        // } else {
+                            alert(data.message || 'Hubo un error al enviar el mensaje. Por favor, inténtalo de nuevo.');
+                        // }
+                    }
+                } catch (error) {
+                    console.error('Error al enviar formulario de contacto:', error);
+                    // if (mainFormStatusMessage) {
+                    //     mainFormStatusMessage.textContent = 'Error de conexión. Por favor, inténtalo más tarde.';
+                    //     mainFormStatusMessage.className = 'form-message error';
+                    // } else {
+                        alert('Error de conexión. Por favor, inténtalo más tarde.');
+                    // }
+                }
+            }
+        });
+
+         // Limpiar errores al escribir
+        nombreInput.addEventListener('input', () => displayError(nombreInput, ''));
+        emailInput.addEventListener('input', () => displayError(emailInput, ''));
+        mensajeInput.addEventListener('input', () => displayError(mensajeInput, ''));
+        if (telefonoInput) {
+            telefonoInput.addEventListener('input', () => displayError(telefonoInput, ''));
+        }
     }
 });

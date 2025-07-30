@@ -3,213 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nuestros Planes - Solutions ADS</title>
-    <meta name="description" content="Descubre los planes de marketing y publicidad digital de Solutions ADS. Encuentra el plan perfecto para tu negocio.">
-    <link rel="stylesheet" href="css/style.css"> 
-    <style>
-        /* --- Definición de colores de la marca para mayor consistencia --- */
-        :root {
-            --brand-blue: #010a16; /* Azul oscuro de la marca */
-            --brand-orange: #d24600; /* Naranja/Dorado de la marca (usado en hover de nav) */
-            --brand-green: #00C853; /* Verde para precios (un verde vibrante) */
-            --text-light: #FFFFFF; /* Texto blanco para fondos oscuros */
-            --text-dark: #333; /* Texto oscuro general */
-            --background-light: #f4f4f4; /* Fondo general de la página */
-        }
-
-        /* --- Estilos específicos para la página de planes --- */
-
-        body.planes-page {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: var(--text-dark); /* Color de texto general */
-            background-color: var(--background-light); /* Fondo claro para la página */
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* Encabezado */
-        header.planes-header {
-            background-color: var(--brand-blue); /* Fondo azul de la marca */
-            color: var(--text-light); /* Texto blanco */
-            padding: 15px 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            flex-wrap: wrap; /* Permite que los elementos se envuelvan si no hay espacio */
-        }
-
-        header.planes-header .logo-planes img {
-            max-width: 60px;
-            height: auto;
-        }
-
-        header.planes-header nav ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-        }
-
-        header.planes-header nav ul li {
-            margin-left: 20px;
-        }
-
-        header.planes-header nav ul li a {
-            color: var(--text-light);
-            text-decoration: none;
-            font-weight: bold;
-            transition: color 0.3s ease;
-        }
-
-        header.planes-header nav ul li a:hover {
-            color: var(--brand-orange); /* Color naranja/dorado al pasar el mouse */
-        }
-
-        /* Título principal de la sección de planes */
-        .main-planes-title {
-            text-align: center;
-            color: var(--brand-orange); /* Color naranja para el título principal */
-            font-size: 2.8em;
-            margin: 40px auto 30px auto; /* Espacio arriba y abajo */
-            width: 90%;
-            max-width: 800px;
-            font-weight: bold;
-        }
-
-        /* Contenedor principal para los planes (las tarjetas) */
-        .planes-container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto 50px auto; /* Ajustado el margen superior */
-            display: grid; /* Usamos Grid para el layout de los planes */
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Columnas responsivas */
-            gap: 30px; /* Espacio entre las tarjetas de planes */
-            flex-grow: 1;
-        }
-
-        /* Estilo para cada tarjeta de plan */
-        .plan-card {
-            background-color: var(--brand-blue); /* Fondo azul para las tarjetas */
-            color: var(--text-light); /* Texto blanco para las tarjetas */
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            
-            /* --- PROPIEDADES AÑADIDAS PARA ALINEAR EL BOTÓN ABAJO --- */
-            display: flex; 
-            flex-direction: column;
-            justify-content: space-between;
-            /* --- FIN DE MODIFICACIONES --- */
-        }
-
-        .plan-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-        }
-
-        .plan-card h2 {
-            color: var(--brand-orange); /* Títulos de planes en naranja */
-            font-size: 2.2em;
-            margin-bottom: 15px;
-        }
-
-        .plan-card .price {
-            font-size: 2.8em;
-            color: var(--brand-green); /* Precios en verde */
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .plan-card .price span {
-            font-size: 0.5em; /* Tamaño para la moneda */
-            vertical-align: super;
-        }
-
-        .plan-card ul {
-            list-style: none;
-            padding: 0;
-            margin: 20px 0;
-            text-align: left; /* Alinea los ítems de la lista a la izquierda */
-            flex-grow: 1; /* Permite que la lista de características ocupe el espacio disponible */
-        }
-
-        .plan-card ul li {
-            margin-bottom: 10px;
-            color: var(--text-light); /* Asegura que el texto de la lista sea blanco */
-            position: relative;
-            padding-left: 20px; /* Espacio para el ícono de check */
-        }
-
-        /* Opcional: Añadir un icono de check para los ítems de la lista */
-        .plan-card ul li::before {
-            content: '✔'; /* Símbolo de check */
-            color: var(--brand-green); /* Color del check */
-            position: absolute;
-            left: 0;
-            top: 0;
-            font-weight: bold;
-        }
-
-        .plan-card .btn-plan {
-            display: inline-block;
-            background-color: var(--brand-orange); /* Fondo naranja para el botón */
-            color: var(--text-light); /* Texto blanco para el botón */
-            padding: 12px 25px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-            margin-top: auto; /* Empuja el botón hacia la parte inferior si hay espacio */
-        }
-
-        .plan-card .btn-plan:hover {
-            background-color: #e89f00; /* Un naranja ligeramente más oscuro para el hover */
-        }
-
-        /* Pie de página */
-        footer.planes-footer {
-            background-color: var(--brand-blue); /* Fondo azul de la marca */
-            color: var(--text-light); /* Texto blanco */
-            text-align: center;
-            padding: 20px;
-            margin-top: 30px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        /* Media queries para responsividad */
-        @media (max-width: 768px) {
-            .main-planes-title {
-                font-size: 2.2em;
-                margin-top: 20px;
-            }
-            .planes-container {
-                grid-template-columns: 1fr; /* Una sola columna en móviles */
-                width: 95%;
-            }
-            header.planes-header {
-                flex-direction: column;
-                padding: 10px;
-            }
-            header.planes-header nav ul {
-                margin-top: 10px;
-            }
-            header.planes-header nav ul li {
-                margin: 0 10px;
-            }
-            .plan-card {
-                padding: 20px;
-            }
-        }
-    </style>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MLJ2W3J0D4"></script>
+    <title>Planes - Solutions ADS | Impulsa tu Negocio Digital</title>
+    <meta name="description" content="Descubre los planes de Solutions ADS para marketing digital, publicidad en Google y Meta, SEO y desarrollo web. Encuentra la solución ideal para tu negocio.">
+    
+    <link rel="icon" href="../img/favicom.png" type="image/png" sizes="50x50"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css"> <script async src="https://www.googletagmanager.com/gtag/js?id=G-MLJ2W3J0D4"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -217,86 +15,79 @@
 
       gtag('config', 'G-MLJ2W3J0D4');
     </script>
-    <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '1084140433248821');
-    fbq('track', 'PageView');
-    </script>
-    <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=1084140433248821&ev=PageView&noscript=1"
-    /></noscript>
-    </head>
-<body class="planes-page">
-
-    <header class="planes-header">
-        <div class="logo-planes">
-            <a href="/">
-                <img src="img/logo-400.png" alt="Logo Solutions ADS">
-            </a>
+</head>
+<body>
+    <header class="main-header">
+        <div class="logo">
+            <a href="../landing/index.html"> <img src="../img/logo-400.png" alt="Logo Solutions ADS"> </a>
         </div>
         <nav>
             <ul>
-                <li><a href="/">Inicio</a></li>
-                <li><a href="/blog.html">Blog</a></li>
-                <li><a href="/contacto.html">Contacto</a></li>
-            </ul>
+                <li><a href="../landing/index.html#inicio">Inicio</a></li> <li><a href="../landing/index.html#nuestros-servicios">Servicios</a></li> <li><a href="blog.html">Blog</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+                <li><a href="../landing/formularios-contacto.html">Planes & Contacto</a></li> </ul>
         </nav>
     </header>
 
-    <h1 class="main-planes-title">Nuestros Planes de Marketing y Publicidad Digital</h1>
+    <main class="planes-page">
+        <section class="planes-section">
+            <div class="container">
+                <h1 class="planes-header-title">Nuestros Planes de Publicidad Digital</h1>
+                <p class="planes-description">
+                    En Solutions ADS, ofrecemos planes de publicidad digital diseñados para adaptarse a las necesidades y objetivos de cada negocio.
+                    Ya sea que estés empezando o buscando escalar tus resultados, tenemos una solución para ti.
+                </p>
 
-    <div class="planes-container">
-        <div class="plan-card">
-            <h2>Plan Básico</h2>
-            <p class="price"><span>USD</span>499</p>
-            <ul>
-                <li>Análisis inicial de tu presencia digital.</li>
-                <li>Gestión básica de Redes Sociales (1 plataforma).</li>
-                <li>1 Campaña de Anuncios Digitales (ej. Google Ads o Facebook Ads).</li>
-                <li>Reporte mensual de rendimiento.</li>
-            </ul>
-            <a href="/contacto.html" class="btn-plan">Más Detalles / Quiero este plan</a>
-        </div>
+                <div class="planes-grid">
+                    <div class="plan-card">
+                        <h2>Plan Básico</h2>
+                        <p class="price"><span>USD</span>299</p>
+                        <ul>
+                            <li>Auditoría inicial de tus campañas existentes o estructura para nuevas.</li>
+                            <li>Creación y gestión de 1 campaña de Google Ads o Meta Ads.</li>
+                            <li>Optimización de palabras clave/audiencias.</li>
+                            <li>Reporte mensual de rendimiento.</li>
+                            <li>Soporte vía email.</li>
+                        </ul>
+                        <button class="btn-plan open-modal-btn" data-plan="Básico">Consultar / Quiero este plan</button>
+                    </div>
 
-        <div class="plan-card">
-            <h2>Plan Crecimiento</h2>
-            <p class="price"><span>USD</span>899</p>
-            <ul>
-                <li>Análisis profundo y estrategia personalizada.</li>
-                <li>Gestión avanzada de Redes Sociales (hasta 3 plataformas).</li>
-                <li>2 Campañas de Anuncios Digitales optimizadas.</li>
-                <li>Optimización SEO básica del sitio web.</li>
-                <li>Reporte detallado y reunión estratégica mensual.</li>
-            </ul>
-            <a href="/contacto.html" class="btn-plan">Más Detalles / Quiero este plan</a>
-        </div>
+                    <div class="plan-card">
+                        <h2>Plan Estándar</h2>
+                        <p class="price"><span>USD</span>599</p>
+                        <ul>
+                            <li>Auditoría y estrategia detallada de tus campañas.</li>
+                            <li>Gestión de 2 campañas de Google Ads o Meta Ads.</li>
+                            <li>Optimización avanzada de anuncios y segmentación.</li>
+                            <li>Análisis de la competencia.</li>
+                            <li>Reporte mensual detallado y reunión estratégica.</li>
+                            <li>Soporte prioritario.</li>
+                        </ul>
+                        <button class="btn-plan open-modal-btn" data-plan="Estándar">Consultar / Quiero este plan</button>
+                    </div>
 
-        <div class="plan-card">
-            <h2>Plan Premium</h2>
-            <p class="price"><span>USD</span>1499</p>
-            <ul>
-                <li>Auditoría completa y estrategia integral.</li>
-                <li>Gestión ilimitada de Redes Sociales.</li>
-                <li>Múltiples Campañas de Anuncios Digitales de alto impacto.</li>
-                <li>SEO avanzado y marketing de contenidos (Blog).</li>
-                <li>Email marketing y automatización.</li>
-                <li>Soporte prioritario y reuniones semanales.</li>
-            </ul>
-            <a href="/contacto.html" class="btn-plan">Más Detalles / Quiero este plan</a>
-        </div>
-
-    </div>
-
-    <footer class="planes-footer">
+                    <div class="plan-card">
+                        <h2>Plan Premium</h2>
+                        <p class="price"><span>USD</span>999</p>
+                        <ul>
+                            <li>Estrategia integral y consultoría personalizada.</li>
+                            <li>Gestión ilimitada de campañas en Google Ads y Meta Ads.</li>
+                            <li>Remarketing y audiencias personalizadas.</li>
+                            <li>Optimización constante para maximizar el ROI.</li>
+                            <li>Análisis de embudo de ventas.</li>
+                            <li>Reporte de rendimiento avanzado y reuniones quincenales.</li>
+                            <li>Soporte 24/7.</li>
+                        </ul>
+                        <button class="btn-plan open-modal-btn" data-plan="Premium">Consultar / Quiero este plan</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="main-footer">
         <p>&copy; 2025 Solutions ADS. Todos los derechos reservados.</p>
     </footer>
 
-</body>
+    <script src="../js/script.js"></script> </body>
 </html>
